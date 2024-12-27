@@ -16,7 +16,7 @@
             width: 1080px;
             height: 1080px;
             background: #f5f5f5;
-            font-family: "Times New Roman", sans-serif;
+            font-family: 'Times New Roman', serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -38,7 +38,7 @@
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures the image scales properly */
+            object-fit: cover;
         }
 
         .content {
@@ -46,7 +46,18 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
-            background: #cab29f;
+            background: linear-gradient(#002147, #002E63);
+        }
+
+        .logo {
+            height: 90px;
+            width: 90px;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            height: 90px;
+            width: 90px;
         }
 
         .arrow {
@@ -57,8 +68,8 @@
         .title-text {
             font-size: 4em;
             font-weight: bold;
-            color: #2f4a60;
-            background: #b0d2da;
+            color: #B0E0E6;
+            background: #002147;
             padding: 10px;
             text-align: center;
             margin-bottom: 20px;
@@ -66,22 +77,40 @@
 
         .body-text {
             font-size: 2em;
-            color: #2f4a60;
+            color: #FFFFFF;
             line-height: 1.5;
         }
 
+        .watermark {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 <div class="container">
 <div class="content">
+<!-- Updated logo section with a proper <img> tag -->
+<div class="logo">
+<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg"/>
+</div>
 <div class="arrow">➜</div>
-<div class="title-text">SC HIGHLIGHTS ISSUES IN DELAYS</div>
-<div class="body-text">The Court underlined that delays in verification disrupt the regularization process and violate principles of natural justice.</div>
+<div class="title-text">HOW DOES MEMGPT FUNCTION</div>
+<div class="body-text">MemGPT treats models as a virtual machine, employing a multilevel memory structure. It abstracts token limit constraints allowing the model to act like it has limitless memory storage.</div>
+<div class="watermark">
+<span>↑</span>
+<span>🎮</span>
+<span>⚡</span>
+</div>
 </div>
 <div class="image">
-<img alt="News Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\451ad2a6-c47d-417b-a531-15196e77b477_page_2.jpg"/>
-</div>
+<img alt="News Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_2.jpg">
+</img></div>
 </div>
 </body>
 </html>

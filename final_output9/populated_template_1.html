@@ -1,89 +1,113 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>News Post</title>
 <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            width: 1080px;
-            height: 1080px;
-            background: #f5f5f5;
-            font-family: Times New Roman, serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    body {
+        width: 1080px;
+        height: 1080px;
+        background: #f5f5f5; /*Preserve Original Color */
+        font-family: 'Times New Roman', serif; /* Modified Font-family */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-        .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+    .container {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
 
-        .image {
-            flex: 1;
-            display: flex;
-        }
+    .image {
+        flex: 1;
+        display: flex;
+    }
 
-        .image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-        }
+    .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Ensures the image scales properly */
+    }
 
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            background: #cab29f;
-        }
+    .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        background: #002147; /* New Background color */
+    }
 
-        .arrow {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+    .logo {
+        height: 90px;
+        width: 90px;
+        margin-bottom: 20px;
+    }
 
-        .title-text {
-            font-size: 4em;
-            font-weight: bold;
-            color: #2f4a60;
-            background: #b0d2da;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+    .logo img {
+        height: 90px;
+        width: 90px;
+    }
 
-        .body-text {
-            font-size: 2em;
-            color: #2f4a60;
-            line-height: 1.5;
-        }
+    .arrow {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
 
-    </style>
+    .title-text {
+        font-size: 4em;
+        font-weight: bold;
+        color: #B0E0E6; /* New color */
+        background: #002147; /* New Background color */
+        padding: 10px;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .body-text {
+        font-size: 2em;
+        color: white; /* New color */
+        line-height: 1.5;
+    }
+
+    .watermark {
+        margin-top: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        color: white; /*Preserve Original Color */
+        font-size: 14px;
+    }
+</style>
 </head>
 <body>
 <div class="container">
 <div class="image">
-<img alt="News Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\451ad2a6-c47d-417b-a531-15196e77b477_page_1.jpg"/>
+<img alt="News Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_1.jpg"/>
 </div>
 <div class="content">
 <div class="logo">
-<img alt="Logo" src/>
+<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg"/>
 </div>
 <div class="arrow">➜</div>
-<div class="title-text">SUPREME COURT'S NEW EMPLOYMENT DIRECTIVE</div>
-<div class="body-text">The Supreme Court of India has ordered prompt verification of government job candidates, demanding completion within six months.</div>
+<div class="title-text">MEMGPT: BOOSTING AI MEMORY</div>
+<div class="body-text">Generative AI faces the challenge of maintaining long-term memory. MemGPT, an open-source framework, resolves this bottleneck &amp; empowers language models like GPT-4 with persistent memory.</div>
+<div class="watermark">
+<span>↑</span>
+<span>🎮</span>
+<span>⚡</span>
+</div>
 </div>
 </div>
 </body>

@@ -8,6 +8,7 @@ import json
 from io import BytesIO
 from html_to_png import local_html_to_png
 import os
+from seq_html_png import sequential_html_to_png
 from html_png import parallel_html_to_png
 import shutil
 from pathlib import Path
@@ -29,11 +30,11 @@ def main(
     color_palette_input=None,
     uploaded_logo=None, 
     include_images=True, 
-    font_style=None
+    font_style=None,
+    user_id=None
 ):
     """
     Main function to process article content and generate designed templates
-    
     Parameters:
     article_input (str): URL, topic, or complete article text
     num_pages (int): Number of pages to generate
@@ -50,7 +51,8 @@ def main(
     uidgenerator = UserIDGenerator()
     modifier_new = AsyncHTMLModifier()
 
-    user_id = uidgenerator.generate_uuid()
+    #user_id = uidgenerator.generate_uuid()
+    user_id=user_id
     
     # Handle logo upload
     logo_path = handle_logo_upload(uploaded_logo,user_id)
@@ -144,8 +146,25 @@ def main(
                 f.write(html_content)
             modified_files.append(output_path)
             print(f"Populated template saved to: {output_path}")
+        #return modified_files 
+        results = sequential_html_to_png(modified_files, "container", 'final_images',brand_config)
+        #results = parallel_html_to_png(modified_files, "container", 'final_images')
         
-        return modified_files
+        # Print conversion summary
+        successful = sum(1 for r in results if r['success'])
+        print(f"\nProcessing Summary:")
+        print(f"Total processed: {len(results)}")
+        print(f"Successful: {successful}")
+        print(f"Failed: {len(results) - successful}")
+        
+        # Print details of failed conversions
+        failed = [r for r in results if not r['success']]
+        if failed:
+            print("\nFailed conversions:")
+            for f in failed:
+                print(f"HTML {f['index']}: {f['error']}")
+        
+        return modified_files, results         
     else:
         print("No matching layouts found. Proceeding with design modification process.")
         print("Populated templates:")
@@ -168,8 +187,8 @@ def main(
         ))
         
         #return modified_files 
-
-        results = parallel_html_to_png(modified_files, "container", 'final_images')
+        results = sequential_html_to_png(modified_files, "container", 'final_images',brand_config)
+        #results = parallel_html_to_png(modified_files, "container", 'final_images')
         
         # Print conversion summary
         successful = sum(1 for r in results if r['success'])
@@ -284,7 +303,7 @@ if __name__ == "__main__":
 
     example_config = {
         'article_input': "https://legal-wires.com/buzz/sc-directs-police-to-complete-verification-of-govt-job-candidates-within-six-months-to-prevent-delays/",
-        'num_pages': 5,
+        'num_pages': 2,
         'color_palette_type': ColorPaletteInput.MANUAL,
         'color_palette_input': ["#b0d2da","#cab29f","#7da1bf","#2f4a60"],
         'uploaded_logo': None,  # Simulated file upload
@@ -295,8 +314,9 @@ if __name__ == "__main__":
 
 
     # Run the main function
-    output_files = main(**example_config)
+    output_files,results  = main(**example_config)
     print("Generated Files:", output_files)    
+    print("Generated Files:", results)
 
     end_time = int(time.time())  
     total_time = end_time-start_time

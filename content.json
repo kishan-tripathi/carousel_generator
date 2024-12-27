@@ -1,52 +1,22 @@
 {
     "pages": [
         {
-            "title": "SUPREME COURT'S NEW EMPLOYMENT DIRECTIVE",
-            "content": "The Supreme Court of India has ordered prompt verification of government job candidates, demanding completion within six months.",
+            "title": "MEMGPT: BOOSTING AI MEMORY",
+            "content": "Generative AI faces the challenge of maintaining long-term memory. MemGPT, an open-source framework, resolves this bottleneck & empowers language models like GPT-4 with persistent memory.",
             "template_path": "template13.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\451ad2a6-c47d-417b-a531-15196e77b477_page_1.jpg",
-            "logo": null,
-            "image_prompt": "An image of the Indian Supreme Court with a team of police officers in the foreground. The officers are amidst a conversation, holding documents which signify the commencement of employee verification. The overlay of a stopwatch signifies the time constraint of six months.",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_1.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg",
+            "image_prompt": "Generate an image of a virtual brain depicted as a computer system. The brain should appear to be made up of various integrated circuits and electronic connects, representing the connection of AI technology. At the center of the brain, include a sign that displays 'MemGPT'. The background should be imposing with data streaming in the background, signifying the flow of information and memory storage in AI. The overall color scheme should be neutrals with blue accents.",
             "image_height": 1080,
             "image_width": 520
         },
         {
-            "title": "SC HIGHLIGHTS ISSUES IN DELAYS",
-            "content": "The Court underlined that delays in verification disrupt the regularization process and violate principles of natural justice.",
+            "title": "HOW DOES MEMGPT FUNCTION",
+            "content": "MemGPT treats models as a virtual machine, employing a multilevel memory structure. It abstracts token limit constraints allowing the model to act like it has limitless memory storage.",
             "template_path": "template14.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\451ad2a6-c47d-417b-a531-15196e77b477_page_2.jpg",
-            "logo": null,
-            "image_prompt": "Illustrate the Supreme Court Justices highlighting issues with a large red pointer. They are pointing at a giant hourly glass, half filled with sand, symbolizing the delay. Scattered around are symbolic scales of justice, representing the violation of principles of natural justice.",
-            "image_height": 1080,
-            "image_width": 520
-        },
-        {
-            "title": "CASE STUDY: BLOCKED BENEFICIAL RIGHTS",
-            "content": "The court cited a case of a 25-year delay before a termination deprived a government servant of his pensionary benefits.",
-            "template_path": "template15.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\451ad2a6-c47d-417b-a531-15196e77b477_page_3.jpg",
-            "logo": null,
-            "image_prompt": "Depict a government servant, appearing dejected, standing outside a government building. He's holding a termination letter, and his badge turned into a ghost, symbolizing his job loss. Nearby is a blurred image of an hourglass indicating the passage of 25 years, and a closed pension book, implying blocked benefits.",
-            "image_height": 1080,
-            "image_width": 520
-        },
-        {
-            "title": "INDIAN JUDICIARY CRITIQUES LAPSES",
-            "content": "The enforced termination was deemed illegal and arbitrary, citing a violation of principles of natural justice.",
-            "template_path": "template16.html",
-            "image": "images\\placeholder.jpg",
-            "logo": null,
-            "image_prompt": "Picture the courthouse with the Indian flag in the background. In the foreground, illustrate a gavel striking a document labeled 'termination,' signifying the illegal and arbitrary decision. Include a broken scale of justice nearby, symbolizing the violation of natural justice.",
-            "image_height": 1080,
-            "image_width": 480.75
-        },
-        {
-            "title": "JUDGMENT REINFORCES ADMIN ACCOUNTABILITY",
-            "content": "The ruling stresses timely verification to avoid delays, uphold justice, and ensure administrative accountability.",
-            "template_path": "template17.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\451ad2a6-c47d-417b-a531-15196e77b477_page_5.jpg",
-            "logo": null,
-            "image_prompt": "Visualize the Supreme Court Justices delivering their ruling. One of the justices is pounding a gavel on a symbolic stopwatch, representing timely verification. Around them are scattered pieces of a jigsaw puzzle, symbolizing administrative accountability, and a radiant scale of justice, highlighting the upholding of justice principles.",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_2.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg",
+            "image_prompt": "Create an image of a multi-layered structure that portrays the memory framework of the AI system. Each layer should be different from the other, representing the Core Memory, Recall Memory, and Archival Memory separately. Each layer shall have different visuals related to data storage such as cloud-like icons for archival memory, light bulb icons for core memory, and notebook icons for recall memory. These layers should be encased within a translucent globe to signify the 'unlimited' aspect of memory storage. It should have light tones of blue, and greys.",
             "image_height": 1080,
             "image_width": 520
         }

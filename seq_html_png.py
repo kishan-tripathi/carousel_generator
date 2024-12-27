@@ -9,22 +9,23 @@ from PIL import Image
 import io
 import base64
 import uuid
-import multiprocessing
 from typing import List, Dict
-from concurrent.futures import ProcessPoolExecutor, as_completed
 
-def process_single_html(args: tuple) -> Dict:
+def process_single_html(html_content: str, class_name: str, output_folder: str, index: int, brand_config: Dict) -> Dict:
     """
     Process a single HTML string to PNG conversion.
     
     Parameters:
-    args (tuple): (html_content, class_name, output_folder, index)
+    html_content (str): HTML content to process
+    class_name (str): Target class name for screenshots
+    output_folder (str): Directory to save the images
+    index (int): Index of the HTML content in the sequence
+    brand_config (Dict): Configuration dictionary with additional information
     
     Returns:
     dict: Dictionary containing the processing results
     """
-    html_content, class_name, output_folder, index, brand_config = args
-    user_id =brand_config['user_id']
+    user_id = brand_config['user_id']
     
     # Create unique subfolder for this process to avoid conflicts
     process_folder = os.path.join(output_folder, f"process_{index}")
@@ -105,55 +106,29 @@ def process_single_html(args: tuple) -> Dict:
     
     return result
 
-async def parallel_html_to_png(html_list: List[str], class_name: str, output_folder: str = "output_images", max_workers: int = None ,brand_config: Dict = None) -> List[Dict]:
+def sequential_html_to_png(html_list: List[str], class_name: str, output_folder: str = "output_images", brand_config: Dict = None) -> List[Dict]:
     """
-    Convert multiple HTML strings to PNG images in parallel.
+    Convert multiple HTML strings to PNG images sequentially.
     
     Parameters:
     html_list (List[str]): List of HTML strings to convert
     class_name (str): The class name to target in the HTML
     output_folder (str): Folder to save the PNG files
-    max_workers (int): Maximum number of parallel processes (defaults to CPU count)
+    brand_config (Dict): Configuration dictionary with additional information
     
     Returns:
     List[Dict]: List of dictionaries containing results for each HTML string
     """
-    if max_workers is None:
-        max_workers = multiprocessing.cpu_count()
-    
-    # Create output directory if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
     
-    # Prepare arguments for parallel processing
-    process_args = [(html, class_name, output_folder, idx, brand_config) for idx, html in enumerate(html_list)]
-    
     results = []
+    for idx, html_content in enumerate(html_list):
+        print(f"Processing HTML {idx}...")
+        result = process_single_html(html_content, class_name, output_folder, idx, brand_config)
+        results.append(result)
+        if result['success']:
+            print(f"Successfully processed HTML {idx} and generated {len(result['files'])} images")
+        else:
+            print(f"Failed to process HTML {idx}: {result['error']}")
     
-    # Use ProcessPoolExecutor for parallel processing
-    with ProcessPoolExecutor(max_workers=max_workers) as executor:
-        # Submit all tasks
-        future_to_idx = {executor.submit(process_single_html, args): args[3] for args in process_args}
-
-        
-        # Process completed tasks
-        for future in as_completed(future_to_idx):
-            idx = future_to_idx[future]
-            try:
-                result = future.result()
-                results.append(result)
-                if result['success']:
-                    print(f"Successfully processed HTML {idx} and generated {len(result['files'])} images")
-                else:
-                    print(f"Failed to process HTML {idx}: {result['error']}")
-            except Exception as e:
-                print(f"Error processing HTML {idx}: {str(e)}")
-                results.append({
-                    'index': idx,
-                    'success': False,
-                    'files': [],
-                    'error': str(e)
-                })
-    
-    # Sort results by original index
-    results.sort(key=lambda x: x['index'])
     return results

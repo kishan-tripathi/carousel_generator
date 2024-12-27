@@ -13,77 +13,103 @@
         }
 
         body {
-            width: 1080px;
-            height: 1080px;
-            background: #cab29f; // modified color
-            font-family: 'Times New Roman', serif; // modified font-family
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+       
         }
 
         .container {
-            display: flex;
-            width: 100%;
-            height: 100%;
+            width: 1080px;
+            height: 1080px;
             position: relative;
             overflow: hidden;
         }
 
         .image {
-            flex: 1;
-            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.1) 0%,
+                rgba(0,0,0,0.5) 70%,
+                rgba(0,0,0,1.0) 100%
+            );
         }
 
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures the image scales properly */
-        }
-
-        .content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            padding: 20px;
-            background: #cab29f; // modified color
-        }
-
-        .arrow {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #2f4a60; // modified color
+            object-fit: cover;
         }
 
         .title-text {
-            font-size: 4em;
-            font-weight: bold;
-            color: #2f4a60; // modified color
-            background: #b0d2da; // modified color
-            padding: 10px;
+            position: absolute;
+            bottom: 150px; /* Adjusted to make space for body-text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
             text-align: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 3em;
+            font-weight: bold;
+            line-height: 1.2;
             margin-bottom: 20px;
-            font-family: 'Times New Roman', serif; // modified font-family
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         .body-text {
-            font-size: 2em;
-            color: #2f4a60; // modified color
-            line-height: 1.5;
-            font-family: 'Times New Roman', serif; // modified font-family
+            position: absolute;
+            bottom: 60px; /* Positioned below title-text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            font-size: 1.5em;
+            line-height: 1.4;
+            opacity: 0.9;
         }
 
+        .logo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 50px;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>
 <div class="container">
 <div class="image">
-<img alt="News Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\451ad2a6-c47d-417b-a531-15196e77b477_page_3.jpg"/>
+<img alt="Flight attendant demonstrating safety instructions" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\1839fecf-8d3b-47f8-a43f-e742c4e022d3_page_3.jpg"/>
 </div>
-<div class="content">
-<div class="arrow">➜</div>
-<div class="title-text">CASE STUDY: BLOCKED BENEFICIAL RIGHTS</div>
-<div class="body-text">The court cited a case of a 25-year delay before a termination deprived a government servant of his pensionary benefits.</div>
+<div class="title-text">THE ROLE OF SYSTEM PROMPTING IN MEMGPT</div>
+<div class="body-text">System prompt is key in guiding a language model’s behavior and leveraging MemGPT effectively.</div>
+<div class="logo">
+<img alt="The Tatva Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\1839fecf-8d3b-47f8-a43f-e742c4e022d3logo_.svg"/>
 </div>
 </div>
 </body>
