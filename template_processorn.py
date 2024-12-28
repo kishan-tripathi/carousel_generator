@@ -121,6 +121,8 @@ class TemplateSelector:
             # Extract pages from carousel_content
             pages = carousel_content if isinstance(carousel_content, list) else carousel_content.get('pages', [])
             print(f"Found {len(pages)} pages to process")
+
+            
     
             # Create a mapping of template filenames to their content
             template_map = {}
@@ -175,7 +177,14 @@ class TemplateSelector:
                     body_div = template_soup.find(class_='body-text')
                     if body_div and 'content' in page:
                         body_div.string = page['content'] 
-    
+
+                    brand_name_div = template_soup.find(class_='brand-name')
+                    if brand_name_div:
+                        brand_name = brand_config['brand_name']
+                        brand_name_div.string = brand_name
+                    else:
+                        print("Brand-name div not found, continuing without updating.")                        
+                        
                     # Update logo
                     logo_div = template_soup.find(class_='logo')
                     if logo_div:

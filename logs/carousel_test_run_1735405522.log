@@ -1,0 +1,20 @@
+2024-12-28 22:35:22,558 - INFO - Starting content generation for user: None
+2024-12-28 22:35:23,594 - INFO - Components initialized successfully
+2024-12-28 22:35:45,636 - INFO - Logo and color palette processed
+2024-12-28 22:35:46,739 - INFO - Article fetched from URL
+2024-12-28 22:35:46,784 - INFO - Templates selected
+2024-12-28 22:36:07,496 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:36:21,519 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:38:36,456 - INFO - Carousel content generated
+2024-12-28 22:38:40,513 - INFO - Templates Populated
+2024-12-28 22:38:40,514 - INFO - Using custom layout
+2024-12-28 22:38:48,360 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:05,218 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:08,044 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:09,072 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:17,296 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:19,289 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:39:19,296 - INFO - Done with modifications
+2024-12-28 22:39:49,401 - INFO - Conversions: 5 successful, 0 failed
+2024-12-28 22:39:49,402 - INFO - Process completed in 266.84 seconds
+2024-12-28 22:39:49,403 - INFO - Test completed successfully

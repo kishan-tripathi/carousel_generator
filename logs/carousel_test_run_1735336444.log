@@ -1,0 +1,20 @@
+2024-12-28 03:24:04,944 - INFO - Starting content generation for user: None
+2024-12-28 03:24:05,791 - INFO - Components initialized successfully
+2024-12-28 03:24:32,837 - INFO - Logo and color palette processed
+2024-12-28 03:24:33,319 - INFO - Article fetched from URL
+2024-12-28 03:25:06,207 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 03:25:37,716 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 03:28:39,613 - INFO - Using predefined layout
+2024-12-28 03:29:51,362 - INFO - Conversions: 0 successful, 5 failed
+2024-12-28 03:29:51,363 - ERROR - Failed conversion 0: Message: 
+
+2024-12-28 03:29:51,364 - ERROR - Failed conversion 1: Message: 
+
+2024-12-28 03:29:51,365 - ERROR - Failed conversion 2: Message: 
+
+2024-12-28 03:29:51,366 - ERROR - Failed conversion 3: Message: 
+
+2024-12-28 03:29:51,367 - ERROR - Failed conversion 4: Message: 
+
+2024-12-28 03:29:51,368 - INFO - Process completed in 346.42 seconds
+2024-12-28 03:29:51,368 - INFO - Test completed successfully

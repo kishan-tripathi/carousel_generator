@@ -1,24 +1,64 @@
 {
     "pages": [
         {
-            "title": "MEMGPT: BOOSTING AI MEMORY",
-            "content": "Generative AI faces the challenge of maintaining long-term memory. MemGPT, an open-source framework, resolves this bottleneck & empowers language models like GPT-4 with persistent memory.",
-            "template_path": "template13.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_1.jpg",
-            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg",
-            "image_prompt": "Generate an image of a virtual brain depicted as a computer system. The brain should appear to be made up of various integrated circuits and electronic connects, representing the connection of AI technology. At the center of the brain, include a sign that displays 'MemGPT'. The background should be imposing with data streaming in the background, signifying the flow of information and memory storage in AI. The overall color scheme should be neutrals with blue accents.",
+            "title": "CELESTIAL UNDERSTANDINGS ACROSS HISTORY",
+            "content": "An insight into our ancient affiliations with astronomy.",
+            "template_path": "template25.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_1.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Illustrate a group of ancient peoples, possibly Polynesian and European, standing on different terrains and earnestly observing the night sky filled with stars and other celestial objects. They should have primitive tools in their hands, symbolizing their attempts to understand and make sense of these heavenly bodies. Some elements of their culture such as religious symbols or structures could be subtly incorporated to depict their spiritual connection with the cosmos.",
             "image_height": 1080,
-            "image_width": 520
+            "image_width": 1080
         },
         {
-            "title": "HOW DOES MEMGPT FUNCTION",
-            "content": "MemGPT treats models as a virtual machine, employing a multilevel memory structure. It abstracts token limit constraints allowing the model to act like it has limitless memory storage.",
-            "template_path": "template14.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\685dcbbd-4b48-4a0f-a48f-820a0446dd37_page_2.jpg",
-            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\685dcbbd-4b48-4a0f-a48f-820a0446dd37logo_.svg",
-            "image_prompt": "Create an image of a multi-layered structure that portrays the memory framework of the AI system. Each layer should be different from the other, representing the Core Memory, Recall Memory, and Archival Memory separately. Each layer shall have different visuals related to data storage such as cloud-like icons for archival memory, light bulb icons for core memory, and notebook icons for recall memory. These layers should be encased within a translucent globe to signify the 'unlimited' aspect of memory storage. It should have light tones of blue, and greys.",
+            "title": "SKY BEHAVIOR AND EARLY NAVIGATION",
+            "content": "Exploring early dependence on celestial objects for navigation.",
+            "template_path": "template26.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_2.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Depict an ancient mariner on a primitive boat navigating the vast, open ocean using the stars. Profile the mariner in great detail to show concentration and determination. Surround the mariner with detailed celestial bodies and a compass to emphasize the significance of the night sky in their navigation.",
             "image_height": 1080,
-            "image_width": 520
+            "image_width": 1080
+        },
+        {
+            "title": "THE BOND OF SPIRITUALITY AND ASTRONOMY",
+            "content": "The role of celestial knowledge in spirituality.",
+            "template_path": "template27.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_3.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Draw a spiritual ceremony being held under the night sky by an ancient civilization. A group of people is gathered around a sacred area where religious symbols are situated. Their heads are tilted upwards in reverence to the heavenly bodies dotting the night sky. The people are performing some ritualistic actions indicating celestial bodies' role in their spiritual beliefs.",
+            "image_height": 1080,
+            "image_width": 1080
+        },
+        {
+            "title": "ASTRONOMY'S IMPACT ON GLOBAL SPREAD",
+            "content": "How understanding skies led to global dispersion.",
+            "template_path": "template28.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_4.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Create an image showing a diverse group of people from different periods of history (hinting Polynesians, Europeans, and modern astrophysicists) standing on a globe, pointing towards the stars. Each group could be equipped with era-appropriate tools to show their understanding of the skies. This would showcase the role of celestial understanding in global dispersion.",
+            "image_height": 1080,
+            "image_width": 1080
+        },
+        {
+            "title": "EXTRAORDINARY ARCHAEOLOGICAL SITES",
+            "content": "Sights designed to trace the sun’s movement.",
+            "template_path": "template29.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_5.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Sketch an array of world’s most remarkable archaeological sites, such as the Pyramids of Egypt, Stonehenge in England and others. Each monument can be shown in relation to the sun to depict how they have been built to trace the movement of the sun over the seasons. The Sun is shown casting its rays illuminating the structures.",
+            "image_height": 1080,
+            "image_width": 1080
+        },
+        {
+            "title": "CELESTIAL NAVIGATION: NOW AND THEN",
+            "content": "Modern space technologies and ancient techniques.",
+            "template_path": "template30.html",
+            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\None_page_6.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "Illustrate a split comparison scene of an ancient mariner navigating with a simple astrolabe on one side and a modern astronaut navigating with advanced technology in a spaceship on the other side. The shared focus on the night sky between these two scenes underlines the continuity in celestial navigation from historical to modern times.",
+            "image_height": 1080,
+            "image_width": 1080
         }
     ]
 }

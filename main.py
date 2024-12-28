@@ -31,7 +31,8 @@ def main(
     uploaded_logo=None, 
     include_images=True, 
     font_style=None,
-    user_id=None
+    user_id=None,
+    brand_name=None,
 ):
     """
     Main function to process article content and generate designed templates
@@ -85,7 +86,8 @@ def main(
         'logo': logo_path,
         'font_style': font_style,
         'include_images': include_images,
-        'user_id':user_id
+        'user_id':user_id,
+        'brand_name':brand_name
     }
     print(brand_config)
     #processor.update_brand_template(brand_template_path, brand_config)    
@@ -100,7 +102,7 @@ def main(
     if not carousel_content:
         print("Failed to process article content")
         return None
-    print(carousel_content)
+    #print(carousel_content)
 
     filename = 'template_info.txt'
     with open(filename, 'w', encoding='utf-8') as f:
@@ -205,10 +207,51 @@ def main(
                 print(f"HTML {f['index']}: {f['error']}")
         
         return modified_files, results   
+
+
+
+
+if __name__ == "__main__":
     
 
+    start_time = int(time.time())    
+
+    # Simulating a file upload with a file-like object
+    with open("C:\\Users\\shash\\OneDrive\\Documents\\new_carousel_gen\\uploads\\logos\\lexLogo.svg.svg", "rb") as logo_file:  # Replace with your actual logo file path
+        uploaded_logo_simulation = BytesIO(logo_file.read())
+        uploaded_logo_simulation.name = "test_logo.svg"  
+
+    example_config = {
+        'article_input': "https://aeon.co/videos/our-world-has-very-different-contours-when-a-millimetre-is-blown-up-to-a-full-screen",
+        'num_pages': 5,
+        'color_palette_type': ColorPaletteInput.URL,
+        'color_palette_input': "https://www.netflix.com/in/",
+        'uploaded_logo': None,  # Simulated file upload
+        'include_images': True,
+        'font_style': "Verdana",
+        'brand_name':"@Legalwires"
+    }
 
 
+
+    # Run the main function
+    output_files,results  = main(**example_config)
+    print("Generated Files:", output_files)    
+    print("Generated Files:", results)
+
+    end_time = int(time.time())  
+    total_time = end_time-start_time
+
+    #user_id = example_config['user_id']
+
+    images_directory = 'images'  
+    logos_directory = 'logos'    
+    #cleanup_files(images_directory, logos_directory, user_id)
+    print('files deleted')
+    print(f'total time: {total_time}')
+
+
+#dir layouts:
     ## Define the list of selected layouts
     #selected_layouts = ["layouts_lit/layout1", "layouts_lit/layout5", "layouts_it/layout1", "layouts_it/layout5"]
     #
@@ -291,43 +334,27 @@ def main(
 
 
 
-if __name__ == "__main__":
-    
-
-    start_time = int(time.time())    
-
-    # Simulating a file upload with a file-like object
-    with open("C:\\Users\\shash\\OneDrive\\Documents\\new_carousel_gen\\uploads\\logos\\lexLogo.svg.svg", "rb") as logo_file:  # Replace with your actual logo file path
-        uploaded_logo_simulation = BytesIO(logo_file.read())
-        uploaded_logo_simulation.name = "test_logo.svg"  
-
-    example_config = {
-        'article_input': "https://legal-wires.com/buzz/sc-directs-police-to-complete-verification-of-govt-job-candidates-within-six-months-to-prevent-delays/",
-        'num_pages': 2,
-        'color_palette_type': ColorPaletteInput.MANUAL,
-        'color_palette_input': ["#b0d2da","#cab29f","#7da1bf","#2f4a60"],
-        'uploaded_logo': None,  # Simulated file upload
-        'include_images': True,
-        'font_style': "Arial"
-    }
 
 
 
-    # Run the main function
-    output_files,results  = main(**example_config)
-    print("Generated Files:", output_files)    
-    print("Generated Files:", results)
 
-    end_time = int(time.time())  
-    total_time = end_time-start_time
 
-    #user_id = example_config['user_id']
 
-    images_directory = 'images'  
-    logos_directory = 'logos'    
-    #cleanup_files(images_directory, logos_directory, user_id)
-    print('files deleted')
-    print(f'total time: {total_time}')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     ## Check if the selected template is one of the specified layouts

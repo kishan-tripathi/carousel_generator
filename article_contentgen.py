@@ -212,7 +212,7 @@ class ArticleCarouselGenerator:
         Create engaging and meaningful content that flows naturally across pages while maintaining the article's core message and narrative structure. Each page should work both independently and as part of the sequence.
     
         Article Text:
-        {article_text}"""
+        {article_text[:5000]}"""
     
         try:
             response = self.client.chat.completions.create(
@@ -354,6 +354,7 @@ class ArticleCarouselGenerator:
                 carousel_content, 
                 HTMLTemplateProcessor().template_specs
             )
+            
     
             # Generate images using Flux
             for page in carousel_content['pages']:

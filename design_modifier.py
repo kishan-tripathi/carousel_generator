@@ -79,41 +79,6 @@ class AsyncHTMLModifier:
         
         """  
 
-
-
-
-
-
-#                prompt = f"""
-#    Construct a color scheme for the following:
-#    Content: {carousel_content}
-#    Font style: {font_style}
-#    Color palette (if provided): {color_palette_str}
-#    Include images in the design for enhanced aesthetics.
-#    
-#    STRICT VISIBILITY RULES - YOU MUST FOLLOW THESE:
-#    1. Body-text contrast:
-#       - If content background is dark (luminance < 50%), body-text MUST be white (#FFFFFF)
-#       - If content background is light (luminance ≥ 50%), body-text MUST be black (#000000)
-#       - NO EXCEPTIONS to this rule
-#    
-#    2. Title-text contrast:
-#       - If either content background OR title background is dark, title-text MUST be white (#FFFFFF)
-#       - If both backgrounds are light, title-text MUST be black (#000000)
-#       - NO EXCEPTIONS to this rule
-#    
-#    Required colors to specify:
-#    1. Title background: [Choose from palette or select complementary color]
-#    2. Content background: [Choose from palette or select base color]
-#    3. Title-text: [Choose based on rule 2]
-#    4. Body-text: [MUST follow rule 1]
-#    5. Gradient: [Must match content background]
-#    
-#    For each color choice, explain:
-#    1. The color value in hex
-#    2. The luminance calculation that led to the choice
-#    3. Why it meets the visibility rules
-#    """
             else:
                 prompt = f"""
     Construct a color scheme for the following:
@@ -350,3 +315,47 @@ async def process_templates(populated_templates: List[str],
             modified_files.append(content)
     
     return modified_files
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#                prompt = f"""
+#    Construct a color scheme for the following:
+#    Content: {carousel_content}
+#    Font style: {font_style}
+#    Color palette (if provided): {color_palette_str}
+#    Include images in the design for enhanced aesthetics.
+#    
+#    STRICT VISIBILITY RULES - YOU MUST FOLLOW THESE:
+#    1. Body-text contrast:
+#       - If content background is dark (luminance < 50%), body-text MUST be white (#FFFFFF)
+#       - If content background is light (luminance ≥ 50%), body-text MUST be black (#000000)
+#       - NO EXCEPTIONS to this rule
+#    
+#    2. Title-text contrast:
+#       - If either content background OR title background is dark, title-text MUST be white (#FFFFFF)
+#       - If both backgrounds are light, title-text MUST be black (#000000)
+#       - NO EXCEPTIONS to this rule
+#    
+#    Required colors to specify:
+#    1. Title background: [Choose from palette or select complementary color]
+#    2. Content background: [Choose from palette or select base color]
+#    3. Title-text: [Choose based on rule 2]
+#    4. Body-text: [MUST follow rule 1]
+#    5. Gradient: [Must match content background]
+#    
+#    For each color choice, explain:
+#    1. The color value in hex
+#    2. The luminance calculation that led to the choice
+#    3. Why it meets the visibility rules
+#    """

@@ -1,0 +1,11 @@
+2024-12-28 22:23:33,404 - INFO - Starting content generation for user: None
+2024-12-28 22:23:34,693 - INFO - Components initialized successfully
+2024-12-28 22:23:57,437 - INFO - Logo and color palette processed
+2024-12-28 22:23:57,915 - INFO - Article fetched from URL
+2024-12-28 22:23:57,936 - INFO - Templates selected
+2024-12-28 22:24:24,941 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:24:34,145 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-28 22:26:13,376 - INFO - Carousel content generated
+2024-12-28 22:26:13,391 - INFO - Templates Populated
+2024-12-28 22:26:13,392 - ERROR - Template population failed
+2024-12-28 22:26:13,393 - ERROR - Test failed: cannot unpack non-iterable NoneType object
