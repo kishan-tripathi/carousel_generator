@@ -35,6 +35,7 @@ class ArticleRequest(BaseModel):
     color_palette_input: Union[List[str], HttpUrl] = Field(..., description="List of colors or URL")
     include_images: bool = Field(True, description="Whether to include images")
     font_style: FontStyle
+    brand_name:str = Field(..., description= "Brand name if available")
 
 @app.post("/generate-article/")
 async def generate_article(
@@ -69,6 +70,7 @@ async def generate_article(
             if article_request.color_palette_type == ColorPaletteType.MANUAL
             else ColorPaletteInput.URL
         )
+     
 
         await asyncio.to_thread(
             main_module,
@@ -80,6 +82,7 @@ async def generate_article(
             include_images=article_request.include_images,
             font_style=article_request.font_style,
             user_id=user_id,
+            brand_name=article_request.brand_name,
         )
 
         # Return success response
