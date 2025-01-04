@@ -13,26 +13,39 @@
         }
 
         body {
-            width: 1080px;
-            height: 1080px;
-            font-family: Arial, sans-serif;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Verdana;
+            min-height: 100vh;
         }
 
         .container {
-            width: 100%;
-            height: 100%;
+            width: 1080px;
+            height: 1080px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
         .image {
             width: 100%;
-            height: 70%;
-            background-size: cover;
-            background-position: center;
+            height: 100%;
+            position: relative;
+        }
+
+        .image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1080px;
+            height: 1080px;
+            background: linear-gradient(
+                to bottom,
+                rgba(0,0,0,0.1) 0%,
+                rgba(0,0,0,0.5) 70%,
+                rgba(0,0,0,1.0) 100%
+            );
         }
 
         .image img {
@@ -41,85 +54,72 @@
             object-fit: cover;
         }
 
-        .content {
-            width: 100%;
-            height: 30%;
-            background: #F5F5DC;
-            position: relative;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+        .title-text {
+            position: absolute;
+            bottom: 150px; /* Adjusted to make space for body-text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .body-text {
+            position: absolute;
+            bottom: 90px; /* Positioned below title-text */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            text-align: center;
+            color: #ffffff;
+            font-size: 1.5em;
+            line-height: 1.4;
+            opacity: 0.9;
         }
 
         .logo {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            height: 90px;
+            top: 10px;
+            right: 10px;
             width: 90px;
-            padding: 5px; 
+            height: 90px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .logo img {
-            height: 100%;
-            width: 100%;
+            height: 50px;
             object-fit: contain;
         }
 
-        .arrow {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 24px;
-        }
-
-        .title-text {
-            font-size: 3em;
-            font-weight: bold;
-            color: #000000;
-            background: #C0C0C0;
-            margin-bottom: 10px;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px; 
-        }
-
-        .body-text {
-            font-size: 20px;
-            color: #2F4F4F;
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-
         .brand-name {
-            font-size: 20px;
-            color: #333;
-            text-align: center;
             position: absolute;
-            bottom: 20px; 
-            left: 50%; 
+            bottom: 20px; /* Adjusted to be below the body text */
+            left: 50%;
             transform: translateX(-50%);
-            width: auto;
-            padding: 10px;
-            border-radius: 5px;
+            font-size: 1.3em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 <div class="container">
 <div class="image">
-<img alt="Image" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\images\b496139f-f7db-4181-814b-8bcdcaf29cf9_page_1.jpg"/>
+<img alt="Flight attendant demonstrating safety instructions" src="images\placeholder.jpg"/>
 </div>
-<div class="content">
-<div class="title-text">INTRODUCING MEMGPT: REVOLUTIONARY ADVANCE IN AI</div>
-<div class="body-text">Generative AI speeds ahead, but language models struggle due to limited token windows. Hence, recalling conversation details is a challenge. MemGPT, an innovative open-source framework addresses this issue, enabling 'Extended' memory for models with no token constraints.</div>
+<div class="title-text">INTRODUCTION TO MEMGPT: UNLOCKING AI MEMORY</div>
+<div class="body-text">Generative AI evolves but struggles with long-term memory.</div>
 <div class="logo">
-<img alt="logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\b496139f-f7db-4181-814b-8bcdcaf29cf9logo_.svg"/>
+<img alt="The Tatva Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
 </div>
-<div class="arrow">➜</div>
-<div class="brand-name">@LegalWires</div>
-</div>
+<div class="brand-name">@legalwires</div>
 </div>
 </body>
 </html>

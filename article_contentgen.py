@@ -7,7 +7,9 @@ import requests
 from dotenv import load_dotenv
 from openai import OpenAI
 from template_processor import HTMLTemplateProcessor
+import logging
 
+logger = logging.getLogger(__name__)
 load_dotenv()
 
 #class FluxImageGeneratorAPI:
@@ -100,10 +102,12 @@ class FluxImageGeneratorAPI:
 
 
 class ArticleCarouselGenerator:
+
     def __init__(self, openai_api_key=None, flux_api_key=None, default_pages=5):
         self.client = OpenAI(api_key=openai_api_key or os.getenv('OPENAI_API_KEY'))
         self.default_pages = default_pages
         self.flux_generator = FluxImageGeneratorAPI()
+        # self.auth_token = os.getenv('AUTH_TOKEN')
 
     def fetch_article_content(url):
         """
@@ -123,24 +127,22 @@ class ArticleCarouselGenerator:
             # Parse HTML content
             soup = BeautifulSoup(response.text, 'html.parser')
             
-            # Define potential article containers in order of priority
-            candidate_selectors = [
-                'article',                      # Standard article tag
-                'div.article-content',          # Common class for article content
-                'div.main-content',             # Common class for main content
-                'div.content',                  # General content class
-                'body'                          # Fallback to the entire body if all else fails
-            ]
             
+            candidate_selectors = [
+                'article',                      
+                'div.article-content',         
+                'div.main-content',             
+                'div.content',                 
+                'body'                         
+            ]
             for selector in candidate_selectors:
-                # Attempt to find content matching the current selector
+
                 candidate = soup.select_one(selector)
                 if candidate:
                     text = candidate.get_text(strip=True)
-                    if len(text) > 50:  # Ensure content is substantial
+                    if len(text) > 50: 
                         return text
             
-            # If no content is found, raise a custom exception
             raise ValueError("Article content could not be extracted from the provided URL.")
         
         except requests.RequestException as req_err:
@@ -153,28 +155,88 @@ class ArticleCarouselGenerator:
 
     def generate_article(self, topic):
 
+
         prompt = f"""
-
         Generate an article on this topic in around 3000 words. Topic:{topic}
-
-
-
         """
-
-
-    
-    
         response = self.client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
                 {"role": "user", "content": prompt}
             ]
         )
-        
-        # Extract the content from the response
         content = response.choices[0].message.content
         return content
+
+
+    #def generate_carousel_content(self, article_text, template_info):
+    #    """
+    #    Generate carousel content using OpenAI API
+    #    
+    #    Args:
+    #        article_text (str): The article text to base content on
+    #        template_info (list): List of template information
+    #    
+    #    Returns:
+    #        dict: Parsed JSON content for carousel
+    #    """
+    #
+    #    prompt = f"""
+    #    Break down the following article into {len(template_info)} pages.
+    #    Each page must adhere to the title and body text length constraints provided. And try to generate text a little less than the constraint. Length is the number of characters.
+    #
+    #    Constraints:
+    #    {json.dumps(template_info, indent=2)}
+    #
+    #    Output Format:
+    #    {{
+    #        "pages": [
+    #            {{
+    #                "title": "Page title (adhering to constraints) should be all in uppercase",
+    #                "content": "Page body text (optional) (adhering to constraints) generate text half size of given size constraint i.e., number of characters",
+    #                "template_path": "Path to template",
+    #                "image": "Path to image",
+    #                "logo": "Path to logo"
+    #            }}
+    #        ]
+    #    }}
+    #
+    #    Create engaging and meaningful content that flows naturally across pages while maintaining the article's core message and narrative structure. Each page should work both independently and as part of the sequence.
+    #
+    #    Article Text:
+    #    {article_text[:4500]}"""
+    #
+    #    try:
+    #        response = self.client.chat.completions.create(
+    #            model="gpt-4o",
+    #            messages=[
+    #                {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
+    #                {"role": "user", "content": prompt}
+    #            ]
+    #        )
+    #        
+    #        # Extract the content from the response
+    #        content = response.choices[0].message.content
+    #        print("Generated content:", content)
+    #        
+    #        # Remove markdown formatting if present
+    #        if content.startswith('```json'):
+    #            content = content.replace('```json\n', '').replace('\n```', '')
+    #        
+    #        # Parse the JSON content
+    #        json_content = json.loads(content)
+    #        
+    #        # Validate the structure
+    #        if not isinstance(json_content, dict) or 'pages' not in json_content:
+    #            raise ValueError("Invalid JSON structure")
+    #        
+    #        # Match template paths from template_info to the generated content
+    #        for i, page in enumerate(json_content['pages']):
+    #            if i < len(template_info):
+    #                page['template_path'] = template_info[i]['path']
+    #                
+    #        return json_content
 
 
     def generate_carousel_content(self, article_text, template_info):
@@ -188,20 +250,25 @@ class ArticleCarouselGenerator:
         Returns:
             dict: Parsed JSON content for carousel
         """
+        # removing 'content'
+        sanitized_template_info = [
+            {key: value for key, value in template.items() if key != "content"}
+            for template in template_info
+        ]
     
         prompt = f"""
-        Break down the following article into {len(template_info)} pages.
+        Break down the following article into {len(sanitized_template_info)} pages.
         Each page must adhere to the title and body text length constraints provided. And try to generate text a little less than the constraint. Length is the number of characters.
     
         Constraints:
-        {json.dumps(template_info, indent=2)}
+        {json.dumps(sanitized_template_info, indent=2)}
     
         Output Format:
         {{
             "pages": [
                 {{
                     "title": "Page title (adhering to constraints) should be all in uppercase",
-                    "content": "Page body text (optional) (adhering to constraints) generate text half size of given size constraint i.e., number of characters",
+                    "content": "Page body text (adhering to constraints) generate text half size of given size constraint i.e., number of characters",
                     "template_path": "Path to template",
                     "image": "Path to image",
                     "logo": "Path to logo"
@@ -212,44 +279,41 @@ class ArticleCarouselGenerator:
         Create engaging and meaningful content that flows naturally across pages while maintaining the article's core message and narrative structure. Each page should work both independently and as part of the sequence.
     
         Article Text:
-        {article_text[:5000]}"""
+        {article_text[:4500]}
+
+        Give the json man"""
     
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
                     {"role": "user", "content": prompt}
                 ]
             )
             
-            # Extract the content from the response
             content = response.choices[0].message.content
             print("Generated content:", content)
-            
-            # Remove markdown formatting if present
+           
             if content.startswith('```json'):
                 content = content.replace('```json\n', '').replace('\n```', '')
-            
-            # Parse the JSON content
+           
             json_content = json.loads(content)
-            
-            # Validate the structure
+        
             if not isinstance(json_content, dict) or 'pages' not in json_content:
                 raise ValueError("Invalid JSON structure")
             
-            # Match template paths from template_info to the generated content
+           
             for i, page in enumerate(json_content['pages']):
                 if i < len(template_info):
                     page['template_path'] = template_info[i]['path']
                     
             return json_content
-            
         except json.JSONDecodeError as e:
-            print(f"JSON parsing error: {str(e)}")
+            logger.error(f"JSON parsing error: {str(e)}")
             return None
         except Exception as e:
-            print(f"Error generating carousel content: {str(e)}")
+            logger.error(f"Error generating carousel content: {str(e)}")
             return None       
 
     def generate_image_prompts(self, article_text, carousel_content):
@@ -286,16 +350,21 @@ class ArticleCarouselGenerator:
 
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": "You are an expert at creating detailed image generation prompts."},
                     {"role": "user", "content": prompt}
                 ]
             )
+            print( f"this is response {response}")
+            response_content = response.choices[0].message.content
+            response_content = response_content.replace('```json', '').replace('```', '').strip()
             
-            image_prompts = json.loads(response.choices[0].message.content)
+            image_prompts = json.loads(response_content)
+
+            print(f"this is image prompt{image_prompts}")
             
-            # Update carousel content with image prompts
+            # update carousel content with image prompts
             for page_prompt in image_prompts['pages']:
                 page_idx = page_prompt['page_number'] - 1
                 carousel_content['pages'][page_idx]['image_prompt'] = page_prompt['image_prompt']
@@ -303,7 +372,7 @@ class ArticleCarouselGenerator:
             return carousel_content
             
         except Exception as e:
-            print(f"Error generating image prompts: {e}")
+            logger.error(f"Error generating image prompts: {e}")
             return None
 
     def update_content_with_dimensions(self, carousel_content, template_specs):
@@ -343,25 +412,28 @@ class ArticleCarouselGenerator:
             return None
     
         if include_images:
-            # Generate image prompts
+            
+           
             carousel_content = self.generate_image_prompts(article_text, carousel_content)
+            
             if not carousel_content:
-                print("Failed to generate image prompts")
+                logger.error("Failed to generate image prompts")
                 return None
+            logger.info("Image prompts generated sucessfully!!")
     
-            # Update content with image dimensions
+           
             carousel_content = self.update_content_with_dimensions(
                 carousel_content, 
                 HTMLTemplateProcessor().template_specs
             )
+            logger.info("carousel content updated sucessfully with dims!!")
             
     
-            # Generate images using Flux
+           
+            logger.info("Started Image generation")
             for page in carousel_content['pages']:
-                # Ensure images directory exists
+               
                 os.makedirs('images', exist_ok=True)
-                
-                # Generate and save image using Flux
                 image_path = self.flux_generator.generate_image(
                     prompt=page['image_prompt'],
                     height=page['image_height'],
@@ -376,9 +448,10 @@ class ArticleCarouselGenerator:
                 if image_path:
                     page['image'] = image_path
                 else:
-                    print(f"Warning: Failed to generate image for page {carousel_content['pages'].index(page) + 1}")
-                    # Default/placeholder image here
+                    logger.error(f"Warning: Failed to generate image for page {carousel_content['pages'].index(page) + 1}")
                     page['image'] = os.path.join('images', 'placeholder.jpg')
+
+            logger.info("Images generated sucessfully")        
     
         # Handle logo from brand_config
         logo_path = brand_config.get('logo', None)
@@ -386,7 +459,7 @@ class ArticleCarouselGenerator:
             if logo_path:
                 page['logo'] = logo_path
             else:
-                print("Warning: No logo path provided in brand_config.")
+                logger.error("Warning: No logo path provided in brand_config.")
                 page['logo'] = None  # Or set a default logo path
     
         # Save the final content
@@ -395,6 +468,6 @@ class ArticleCarouselGenerator:
                 json.dump(carousel_content, json_file, indent=4, ensure_ascii=False)
             return carousel_content
         except Exception as e:
-            print(f"Error saving JSON file: {e}")
+            logger.error(f"Error saving JSON file: {e}")
             return None
 

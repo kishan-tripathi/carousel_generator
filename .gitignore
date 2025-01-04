@@ -1,5 +1,16 @@
 .env
 app2.py
 test.py
+test2.py
+app3.py
+
 logos/
 images/
+final_images/
+article_contentgen2.py
+article_contentgen3.py
+design_modifier.py
+main2.py
+template_processor.py
+html_to_png.py
+logs/
