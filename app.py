@@ -1,5 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import StreamingResponse
 from enum import Enum
 from typing import List, Optional, Union
 from pydantic import BaseModel, Field, HttpUrl
@@ -17,25 +17,67 @@ from utils import ColorPaletteInput, cleanup_files, UserIDGenerator
 app = FastAPI()
 uid_generator = UserIDGenerator()
 
-class FontStyle(str, Enum):
-    ARIAL = "Arial"
-    HELVETICA = "Helvetica"
-    TIMES_NEW_ROMAN = "Times New Roman"
-    GEORGIA = "Georgia"
-    VERDANA = "Verdana"
-
+#class FontStyle(str, Enum):
+#    ARIAL = "Arial"
+#    HELVETICA = "Helvetica"
+#    TIMES_NEW_ROMAN = "Times New Roman"
+#    GEORGIA = "Georgia"
+#    VERDANA = "Verdana"
+#
 class ColorPaletteType(str, Enum):
     MANUAL = "MANUAL"
     URL = "URL"
 
 class ArticleRequest(BaseModel):
     article_input: str = Field(..., description="URL or text of the article")
-    num_pages: int = Field(..., ge=1, le=6, description="Number of pages to generate")
+    num_pages: int = Field(..., ge=1, le=9, description="Number of pages to generate")
     color_palette_type: ColorPaletteType
-    color_palette_input: Union[List[str], HttpUrl] = Field(..., description="List of colors or URL")
+    color_palette_input: Union[List[str], str] = Field(..., description="List of colors or URL")
     include_images: bool = Field(True, description="Whether to include images")
-    font_style: FontStyle
-    brand_name:str = Field(..., description= "Brand name if available")
+    font_style:str = Field(..., description="Font Style")
+    brand_name: Optional[str] = Field(None, description="Brand name if logo is provided")
+
+async def create_download_zip(user_id: str) -> BytesIO:
+    """
+    Creates a ZIP file containing all generated images for a specific user_id.
+    Returns a BytesIO object containing the ZIP file.
+    
+    Args:
+        user_id (str): The user ID to search for in image filenames
+        
+    Returns:
+        BytesIO: A buffer containing the ZIP file with all matching images
+        
+    Raises:
+        HTTPException: If no images are found for the given user ID
+    """
+    zip_buffer = BytesIO()
+    
+    base_dir = os.path.abspath("final_images")
+  
+    search_pattern = os.path.join(base_dir, f"*{user_id}*.png")
+    
+    image_files = glob.glob(search_pattern)
+
+    print(f"Searching for pattern: {search_pattern}")
+    print(f"Found files: {image_files}")
+    
+    if not image_files:
+        raise HTTPException(status_code=404, detail=f"No images found for user ID: {user_id}")
+    
+    with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        for image_path in image_files:
+            
+            image_name = os.path.basename(image_path)
+            
+            try:
+                zip_file.write(image_path, image_name)
+                print(f"Successfully added {image_name} to ZIP")
+            except Exception as e:
+                print(f"Error adding {image_name} to ZIP: {str(e)}")
+    
+    zip_buffer.seek(0)
+    return zip_buffer
 
 @app.post("/generate-article/")
 async def generate_article(
@@ -45,18 +87,24 @@ async def generate_article(
     user_id = None
     uploaded_logo = None
     try:
-        # Generate unique user ID and create necessary directories
+       
         user_id = uid_generator.generate_uuid()
         user_dir = os.path.join("final_images", user_id)
         os.makedirs(user_dir, exist_ok=True)
         os.makedirs("images", exist_ok=True)
         os.makedirs("logos", exist_ok=True)
 
-        # Parse request data
+      
         request_data = json.loads(request)
         article_request = ArticleRequest(**request_data)
 
-        # Handle logo upload if provided
+     
+        if logo and not article_request.brand_name:
+            raise HTTPException(
+                status_code=400, 
+                detail="Brand name is required if a logo is uploaded."
+            )
+
         if logo:
             logo_filename = f"{user_id}_logo_{logo.filename}"
             logo_path = os.path.join("logos", logo_filename)
@@ -64,13 +112,11 @@ async def generate_article(
                 shutil.copyfileobj(logo.file, buffer)
             uploaded_logo = logo_path
 
-        # Process the main module in a non-blocking way
         color_palette_type = (
             ColorPaletteInput.MANUAL
             if article_request.color_palette_type == ColorPaletteType.MANUAL
             else ColorPaletteInput.URL
         )
-     
 
         await asyncio.to_thread(
             main_module,
@@ -85,58 +131,29 @@ async def generate_article(
             brand_name=article_request.brand_name,
         )
 
-        # Return success response
-        return {
-            "status": "success",
-            "user_id": user_id,
-            "message": "Images generated successfully"
-        }
 
-    except Exception as e:
-        # Clean up files in case of error
-        if user_id:
-            await asyncio.to_thread(cleanup_files, "images", "logos", user_id)
-        raise HTTPException(status_code=500, detail=str(e))
+        zip_buffer = await create_download_zip(user_id)
 
-    finally:
-        # Clean up uploaded logo
-        if uploaded_logo and os.path.exists(uploaded_logo):
-            os.remove(uploaded_logo)
-
-@app.get("/download/{user_id}")
-async def download_images(user_id: str):
-    try:
-        # Create a ZIP file in memory
-        zip_buffer = BytesIO()
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            # Add all images with matching user_id to the ZIP
-            for image in glob.glob(os.path.join("final_images", f"{user_id}*.png")):
-                image_name = os.path.basename(image)
-                zip_file.write(image, image_name)
-        
-        # Reset buffer position
-        zip_buffer.seek(0)
-        
-        # Clean up files immediately after adding them to ZIP
+    
         async def cleanup_user_files():
             try:
-                # Clean up images in final_images directory
-                for file in glob.glob(os.path.join("final_images", f"{user_id}*.png")):
-                    os.remove(file)
+               
+                user_dir = os.path.join("final_images", user_id)
+                if os.path.exists(user_dir):
+                    shutil.rmtree(user_dir)
                 
-                # Clean up images in images directory
+                
                 for file in glob.glob(os.path.join("images", f"{user_id}*")):
                     os.remove(file)
-                
-                # Clean up logos
+               
                 for file in glob.glob(os.path.join("logos", f"{user_id}*")):
                     os.remove(file)
             except Exception as e:
                 print(f"Error during cleanup: {e}")
-        
-        # Schedule cleanup
+
+       
         asyncio.create_task(cleanup_user_files())
-        
+
         return StreamingResponse(
             zip_buffer,
             media_type="application/zip",
@@ -144,11 +161,23 @@ async def download_images(user_id: str):
                 "Content-Disposition": f"attachment; filename=images_{user_id}.zip"
             }
         )
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Download failed: {str(e)}")
+        
+        if user_id:
+            await asyncio.to_thread(cleanup_files, "images", "logos", user_id)
+        raise HTTPException(status_code=500, detail=str(e))
+
+    finally:
+        
+        if uploaded_logo and os.path.exists(uploaded_logo):
+            os.remove(uploaded_logo)
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="localhost", port=8000)
+
+
+
 
 

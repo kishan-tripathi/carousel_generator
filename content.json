@@ -1,24 +1,54 @@
 {
     "pages": [
         {
-            "title": "INTRODUCING MEMGPT: REVOLUTIONARY ADVANCE IN AI",
-            "content": "Generative AI speeds ahead, but language models struggle due to limited token windows. Hence, recalling conversation details is a challenge. MemGPT, an innovative open-source framework addresses this issue, enabling 'Extended' memory for models with no token constraints.",
-            "template_path": "template19.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\b496139f-f7db-4181-814b-8bcdcaf29cf9_page_1.jpg",
-            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\b496139f-f7db-4181-814b-8bcdcaf29cf9logo_.svg",
-            "image_prompt": "A futuristic image featuring the interface of a conversational AI system on a digital screen, with visible lines of code, language processing symbols and icons. Next to the screen, include a technical open-source emblem to signify the open-source aspect of MemGPT. The background is a fast-paced matrix of binary numbers illustrating the speed and advancement of generative AI.",
+            "title": "INTRODUCTION TO MEMGPT: UNLOCKING AI MEMORY",
+            "content": "Generative AI evolves but struggles with long-term memory.",
+            "template_path": "template1.html",
+            "image": "images\\placeholder.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "An abstract representation of a neural network with digital brain imagery, showcasing the concept of artificial intelligence evolving. Incorporate ethereal lines and glowing nodes connecting various parts of the brain, symbolizing the struggle and potential of generative AI to achieve long-term memory. The background should be filled with soft, futuristic light patterns that suggest evolution and advancement in AI technology.",
             "image_height": 1080,
-            "image_width": 760
+            "image_width": 1080
         },
         {
-            "title": "HOW DOES MEMGPT WORK?",
-            "content": "MemGPT uses a virtual machine concept with a memory management system. It houses a Core for essential facts, Recall for specific memories, and an Archival for important data storage. All this enables replicating unlimited memory capacities in AI models.",
-            "template_path": "template20.html",
-            "image": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\images\\b496139f-f7db-4181-814b-8bcdcaf29cf9_page_2.jpg",
-            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\b496139f-f7db-4181-814b-8bcdcaf29cf9logo_.svg",
-            "image_prompt": "An image of a conceptualized virtual machine, with distinct sections labeled as 'Core', 'Recall', and 'Archival', visualizing the multi-tiered memory management system of MemGPT. Each section shows abstract visual representations: 'Core' storing dots representing facts, 'Recall' having lines targeting specific memories, and 'Archival' housing boxes symbolizing important stored data. The virtual machine is enveloped by unlimited chains of tokens, illustrating the unlimited memory capacity of AI models.",
+            "title": "MEMGPT: A BREAKTHROUGH FRAMEWORK FOR MEMORY",
+            "content": "MemGPT equips models like GPT-4 with extended memory.",
+            "template_path": "template2.html",
+            "image": "images\\placeholder.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "A futuristic, sophisticated digital interface displaying an AI language model surrounded by cloud-like storage units symbolizing extended memory. Include elements like data streams and binary code cascading around the AI model, illuminating the breakthrough concept of MemGPT's framework which empowers models like GPT-4 with enhanced memory capabilities. The scene should evoke a sense of innovation and engineering marvel.",
             "image_height": 1080,
-            "image_width": 760
+            "image_width": 1080
+        },
+        {
+            "title": "HOW MEMGPT WORKS: VIRTUAL MACHINE APPROACH",
+            "content": "MemGPT uses a multi-level memory like human memory.",
+            "template_path": "template25.html",
+            "image": "images\\placeholder.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "A detailed visualization of a virtual machine operating system with layered structures akin to human brain convolutions. Depict a multi-level memory architecture with labeled sections such as Core Memory, Recall Memory, and Archival Memory. The image should illustrate data transfer between layers using light beams or digital strands, symbolizing how MemGPT employs a human-like memory structure.",
+            "image_height": 1080,
+            "image_width": 1080
+        },
+        {
+            "title": "THE POWER OF SYSTEM PROMPTING IN MEMGPT",
+            "content": "Prompts guide the model’s memory use effectively.",
+            "template_path": "template26.html",
+            "image": "images\\placeholder.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "An imaginative depiction of an AI interface with a central 'system prompt' guiding a vast network of interconnected nodes. The nodes should resemble memory cells, demonstrating the flow of information and memory retrieval in a colorful, dynamic array. This setup represents the power of system prompting within MemGPT to effectively manage the AI's enhanced memory usage.",
+            "image_height": 1080,
+            "image_width": 1080
+        },
+        {
+            "title": "KEY CAPABILITIES: ENHANCING AI THROUGH MEMGPT",
+            "content": "MemGPT enables persistence, recall, and action abilities.",
+            "template_path": "template27.html",
+            "image": "images\\placeholder.jpg",
+            "logo": "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator\\logos\\Nonelogo_.svg",
+            "image_prompt": "A dynamic scene showing an AI assistant interacting with various modules that represent memories, actions, and personas. Use vibrant colors to differentiate segments labeled as persistence, recall, and action capabilities. The AI should be depicted as an advanced digital persona engaging with these modules in real-time, portraying the holistic enhancement of AI functions through MemGPT.",
+            "image_height": 1080,
+            "image_width": 1080
         }
     ]
 }

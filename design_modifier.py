@@ -13,8 +13,6 @@ class AsyncHTMLModifier:
         
         self.executor = ThreadPoolExecutor()
 
-
-
     def generate_design_prompt(self, brand_config, carousel_content):
         """
         Generate a design prompt based on the brand configuration and content.
@@ -81,6 +79,7 @@ class AsyncHTMLModifier:
 
             else:
                 prompt = f"""
+    
     Construct a color scheme for the following:
     Content: {carousel_content}
     Font style: {font_style}
@@ -274,7 +273,7 @@ async def process_templates(populated_templates: List[str],
                           output_dir: str,
                           modifier: AsyncHTMLModifier) -> List[str]:
     """
-    Process multiple HTML templates concurrently
+    Process multiple HTML templates concurrently for the process of modification
     """
     async def process_single_template(idx: int, html_content: str) -> tuple[int, Optional[str]]:
         print(f"Processing template {idx + 1}")
@@ -305,10 +304,10 @@ async def process_templates(populated_templates: List[str],
         for idx, html_content in enumerate(populated_templates)
     ]
     
-    # Wait for all tasks to complete
+    
     results = await asyncio.gather(*tasks)
     
-    # Filter out None results and return modified files in original order
+
     modified_files = []
     for idx, content in sorted(results, key=lambda x: x[0]):
         if content:

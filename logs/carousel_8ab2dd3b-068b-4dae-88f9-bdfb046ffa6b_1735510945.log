@@ -1,0 +1,17 @@
+2024-12-30 03:52:25,365 - INFO - Starting content generation for user: 8ab2dd3b-068b-4dae-88f9-bdfb046ffa6b
+2024-12-30 03:52:26,743 - INFO - Components initialized successfully
+2024-12-30 03:52:26,747 - INFO - Logo and color palette processed
+2024-12-30 03:52:27,328 - INFO - Article fetched from URL
+2024-12-30 03:52:27,353 - INFO - Templates selected
+2024-12-30 03:52:42,620 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-30 03:52:49,673 - INFO - HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 200 OK"
+2024-12-30 03:54:01,695 - INFO - Carousel content generated
+2024-12-30 03:54:01,718 - INFO - Templates Populated
+2024-12-30 03:54:01,720 - INFO - Using predefined layout
+2024-12-30 03:54:01,722 - INFO - Done with modifications
+2024-12-30 03:54:30,685 - INFO - Conversions: 0 successful, 2 failed
+2024-12-30 03:54:30,687 - ERROR - Failed conversion 0: Message: 
+
+2024-12-30 03:54:30,688 - ERROR - Failed conversion 1: Message: 
+
+2024-12-30 03:54:30,688 - INFO - Process completed in 125.32 seconds

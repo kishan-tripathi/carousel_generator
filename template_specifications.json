@@ -118,5 +118,30 @@
     "template30.html": {
         "image_height": 1080,
         "image_width": 1080
+    },
+    "template31.html": {
+        "image_height": 1080,
+        "image_width": 520
+    },
+    "template32.html": {
+        "image_height": 1080,
+        "image_width": 500
+    },
+    "template33.html": {
+        "image_height": 1080,
+        "image_width": 520
+    },
+    "template34.html": {
+        "image_height": 1080,
+        "image_width": 760
+    },
+    "template35.html": {
+        "image_height": 1080,
+        "image_width": 760
+    },
+    "template36.html": {
+        "image_height": 1080,
+        "image_width": 760
     }    
+
 }

@@ -15,6 +15,8 @@ from selenium.webdriver.chrome.options import Options
 from sklearn.cluster import KMeans
 import numpy as np
 import webcolors
+import logging
+import logging.config
 
 
 
@@ -182,7 +184,7 @@ def extract_colors_from_website(url):
                 elements = driver.find_elements(By.TAG_NAME, tag_name)
                 for element in elements:
                     bg_color = element.value_of_css_property('background-color')
-                    if bg_color and bg_color != "rgba(0, 0, 0, 0)":  # Exclude transparent
+                    if bg_color and bg_color != "rgba(0, 0, 0, 0)": 
                         color_data.append(bg_color)
             except Exception as e:
                 print(f"Error processing tag {tag_name}: {e}")
@@ -224,3 +226,60 @@ def extract_colors_from_url(url):
 
     # Return the list of dominant colors
     return dominant_colors
+
+def setup_logging(user_id):
+    log_dir = 'logs'
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+    
+    log_file = os.path.join(log_dir, f'carousel1_{user_id}_{int(time.time())}.log')
+    logging_config = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'detailed': {
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            },
+            'simple': {
+                'format': '%(levelname)s - %(message)s'
+            },
+        },
+        'handlers': {
+            'file': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': log_file,
+                'formatter': 'detailed',
+                'level': 'DEBUG',
+                'maxBytes': 10 * 1024 * 1024,
+                'backupCount': 5,
+            },
+            'console': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+                'level': 'INFO',
+            },
+        },
+        'root': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',  # Adjusted to reduce noise
+        },
+        'loggers': {
+            'my_logger': {
+                'handlers': ['file', 'console'],
+                'level': 'DEBUG',
+                'propagate': False,
+            },
+            'requests': {  # Silencing specific libraries
+                'handlers': ['file'],
+                'level': 'WARNING',
+                'propagate': False,
+            },
+            'urllib3': {
+                'handlers': ['file'],
+                'level': 'WARNING',
+                'propagate': False,
+            },
+        }
+    }
+
+    logging.config.dictConfig(logging_config)
