@@ -1,6 +1,6 @@
-from article_contentgen import ArticleCarouselGenerator
-from template_processorn import TemplateSelector
-from design_modifier2 import  HTMLModifier ,process_templates 
+from article_contentgen3 import ArticleCarouselGenerator
+from template_processor import TemplateSelector
+from design_modifier import  HTMLModifier ,process_templates 
 from html_png import async_html_to_png
 from utils import UserIDGenerator
 import asyncio
@@ -151,7 +151,7 @@ def main(
 
 
         logger.info("Started conversion of html to png")
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
 
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
@@ -190,7 +190,7 @@ def main(
         
         logger.info(" converting the html to png files.")
         
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
         
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
@@ -221,12 +221,12 @@ if __name__ == "__main__":
         uploaded_logo_simulation.name = "test_logo.svg"  
 
     example_config = {
-        'article_input': "https://medium.com/@tiro2000/memgpt-unlocking-unlimited-memory-for-conversational-ai-6932002ea8e5",
-        'num_pages' : 5,
+        'article_input': "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans",
+        'num_pages' : 8,
         'color_palette_type': ColorPaletteInput.URL,
-        'color_palette_input': "https://aeon.co/essays/history-is-always-political-and-contest-over-it-is-a-good-thing",
+        'color_palette_input':  "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans",
         'uploaded_logo': uploaded_logo_simulation,  
-        'include_images': True,
+        'include_images': False,
         'font_style': "Verdana",
         'brand_name':"@legalwires"
     }

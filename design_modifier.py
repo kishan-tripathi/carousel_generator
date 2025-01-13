@@ -1,292 +1,240 @@
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 import os
-from openai import OpenAI
+import re
+import traceback
+from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
+from typing import List, Optional, Dict
+import asyncio
+import json
 from dotenv import load_dotenv
-from typing import List, Optional
-from utils import convert_txt_to_html_string
+from openai import OpenAI
+import logging
+from test2 import LlamaAPIClient
 
-class AsyncHTMLModifier:
+logger = logging.getLogger(__name__)
+
+class HTMLModifier:
     def __init__(self):
-        load_dotenv()
-        self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))        
-        
         self.executor = ThreadPoolExecutor()
+        load_dotenv()
+        self.client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))         
+        self.llamaclient = LlamaAPIClient()
+        self.auth_token = os.getenv('AUTH_TOKEN')
+        self.api_url = "https://infer.e2enetworks.net/project/p-4333/endpoint/is-3236/v1/chat/completions"
 
     def generate_design_prompt(self, brand_config, carousel_content):
-        """
-        Generate a design prompt based on the brand configuration and content.
-    
-        Args:
-            brand_config (dict): Dictionary containing branding details, including:
-                - color_palette (list): List of color hex codes.
-                - logo (str): Path to the uploaded logo (optional).
-                - font_style (str): Font style to use.
-                - include_images (bool): Whether to include images.
-            carousel_content (str): Carousel content data.
-    
-        Returns:
-            str: Generated design prompt.
-        """
-        try:
-            # Extract information from the brand configuration
-            color_palette = brand_config.get("color_palette", [])
-            logo = brand_config.get("logo", None)
-            font_style = brand_config.get("font_style", "Default")
-            include_images = brand_config.get("include_images", True)
-    
-            # Handle color palette gracefully
-            if not color_palette:
-                print("No color palette provided. Proceeding with default settings.")
-                color_palette = []  # Use an empty list as a default
-    
-            # Validate the color palette if provided
-            elif not all(isinstance(color, str) and color.startswith("#") for color in color_palette):
-                print("Invalid color palette provided.")
-                return None
-    
-            # Create a formatted string for the color palette
-            color_palette_str = ", ".join(color_palette)
-    
-            # Define the prompts based on include_images
-            if include_images:
-                   
-
-
-                   prompt = f"""
-                    
-                    Construct a prompt:
+            """
+            Generate a design prompt based on the brand configuration and content.
         
-                    For this contetnt:{carousel_content}
+            Args:
+                brand_config (dict): Dictionary containing branding details, including:
+                    - color_palette (list): List of color hex codes.
+                    - logo (str): Path to the uploaded logo (optional).
+                    - font_style (str): Font style to use.
+                    - include_images (bool): Whether to include images.
+                carousel_content (str): Carousel content data.
+        
+            Returns:
+                dict: Generated design prompt in JSON format or an empty dict if an error occurs.
+            """
+            design_json = None
+    
+            try:
+                color_palette = brand_config.get("color_palette", [])
+                logo = brand_config.get("logo", None)
+                font_style = brand_config.get("font_style", "Default")
+                include_images = brand_config.get("include_images", True)
+        
+                if not color_palette:
+                    print("No color palette provided. Proceeding with default settings.")
+                    color_palette = [] 
+        
+                elif not all(isinstance(color, str) and color.startswith("#") for color in color_palette):
+                    print("Invalid color palette provided.")
+                    return {}
+        
+                color_palette_str = ", ".join(color_palette)
+
+                if include_images:
+                    prompt = f"""
+                    Construct a color mapping in JSON format:
+                    For this content: {carousel_content}
                     Font style: {font_style}
+                    This is the color palette: {color_palette_str} if this is None or empty then choose colors for each with your instinct according to the content.
+                    Rules for choosing colors:
+                    1. If the body-text color is not clearly visible enough on the content background, make it white if content background is lighter, else make it black if the content background color is darker.
+                    2. If the title-text color is not clearly visible enough on the title-text background, make it white if the title-text background is lighter, else make it black if the title-text background color is darker.
+                    Provide a JSON object with the following structure:
+                    {{
+                        "title-text": "#hex",
+                        "title-text-background": "#hex",
+                        "body-text": "#hex",
+                        "brand-name": "#hex",
+                        "container": "#hex",
+                        "font-style":"Arial"
+                    }}
+                    """
+                else:
+                    prompt = f"""
+                    Construct a color scheme in JSON format for the following:
+                    Content: {carousel_content}
+                    Font style: {font_style}
+                    Color palette (if provided): {color_palette_str}
+                    Do not include images. Focus on clean and minimalistic design.
+                    STRICT VISIBILITY RULES:
+                    1. Body-text contrast:
+                       - If content background is dark (luminance < 40%), body-text MUST be white (#FFFFFF).
+                       - If content background is light (luminance ≥ 60%), body-text MUST be black (#000000).
+                    2. Title-text contrast:
+                       - If content background is dark, title-text MUST be white (#FFFFFF).
+                       - If content background is light, title-text MUST be black (#000000).
+                    Provide a JSON object with the following structure:
+                    {{
+                        "title-text": "#hex",
+                        "title-text-background": "#hex",
+                        "body-text": "#hex",
+                        "brand-name": "#hex",
+                        "container": "#hex",
+                        "font-style": "Arial",
+                        "number":"#hex"
+                    }}
+                    """
         
-                    This is the color palette:{color_palette_str} if this is None or empty then choose colors for each with your instinct according to  content.
-                    Rules for choosing colors follow this strictly:
-                    1. if the body-text color is not clearly visible enough on the content background then make it white 
-                        if content background is lighter, else make it black if the content background color is darker without any hesitation.
-                    2. if title-text color is not clearly visible enough on the title-text background then make it white 
-                        if title-text background is lighter, else make it black if title-text background color is darker without any hesitation.
-        
-        
-                    Choose one color for these so that text is clearly visible follow the rules:
-                    Title-text
-                    Title-text's background color
-                    Content background (it is .content background or .container not .body backgound)
-                    Body-text
-                    Gradient(Same as content background color)
-        
-        """  
-
-            else:
-                prompt = f"""
-    
-    Construct a color scheme for the following:
-    Content: {carousel_content}
-    Font style: {font_style}
-    Color palette (if provided): {color_palette_str}
-    Do not include images. Focus on clean and minimalistic design.
-    
-    STRICT VISIBILITY RULES - YOU MUST FOLLOW THESE:
-    1. Body-text contrast:
-       - If content background is dark (luminance < 50%), body-text MUST be white (#FFFFFF)
-       - If content background is light (luminance ≥ 50%), body-text MUST be black (#000000)
-       - NO EXCEPTIONS to this rule
-    
-    2. Title-text contrast:
-       - If content background is dark, title-text MUST be white (#FFFFFF)
-       - If content background is light, title-text MUST be black (#000000)
-       - NO EXCEPTIONS to this rule
-    
-    Required colors to specify :
-    1. Content background: [Choose from palette or select base color]
-    2. Title-text: [Choose based on rule 2]
-    3. Body-text: [MUST follow rule 1]
-    Above colors would be same for all the pages.
-    
-    For each color choice, explain:
-    1. The color value in hex
-    2. The luminance calculation that led to the choice
-    3. Why it meets the visibility rules
-    """
-    
-            # Generate CSS modifications
-            response = self.client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-    
-            # Extract generated prompt
-            design_prompt = response.choices[0].message.content.strip()
-    
-            return design_prompt
-    
-        except Exception as e:
-            print(f"Error generating design prompt: {e}")
-            return None        
-
-    async def modify_html_design(self, html_content: str, design_prompt: str, include_images: bool) -> Optional[str]:
-        """
-        Modify HTML design based on design prompt (async version)
-        """
-        try:
-            # Run the OpenAI API call in a thread pool since it's blocking
-            loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(
-                self.executor,
-                lambda: self.client.chat.completions.create(
-                    model="gpt-4",
+                response = self.client.chat.completions.create(
+                    model="gpt-4o-mini",
                     messages=[
-                        {"role": "system", "content": "You are an expert in following the user's prompt strictly."},
-                        {"role": "user", "content": self._create_prompt(html_content, design_prompt)}
+                        {"role": "system", "content": "You are a helpful assistant."},
+                        {"role": "user", "content": prompt}
                     ]
                 )
-            )
-            
-            # Extract and convert generated HTML
-            new_html = response.choices[0].message.content.strip()
-            return convert_txt_to_html_string(new_html)
+        
+    
+                if response:
+                    design_prompt = response.choices[0].message.content.strip()
+                    print(design_prompt)
+                    
+                    json_match = re.search(r'({.*})', design_prompt, re.DOTALL)
+                    
+                    if json_match:
+                        json_str = json_match.group(0)  
+                    
+                        try:
+                            design_json = json.loads(json_str)
+                            print("Parsed JSON:", design_json)
+                        except json.JSONDecodeError:
+                            print("Error parsing response as JSON.")
+                    else:
+                        print("No valid json found in the reponse.!!")
+                else:
+                    print("No valid choices found in the response.")
+                    
+            except Exception as e:
+                print(f"An error occurred: {e}")
+    
+            return design_json if design_json is not None else {}  
+    
+        
+    def update_class_styles(self, css_content: str, selector: str, updates: dict, is_body: bool = False) -> str:
+        """
+    Update the styles for a specific class or tag in the CSS content.
+        
+        If `is_body` is True, it updates the tag without a preceding dot.
+        """
+       
+        pattern = rf'{selector}\s*{{[^}}]*}}' if is_body else rf'\.{selector}\s*{{[^}}]*}}'
+        block = re.search(pattern, css_content, re.DOTALL)
+        
+        if block:
+            block_content = block.group(0)
+            new_block = block_content
 
+            for property_name, value in updates.items():
+                if property_name == 'background':
+                    bg_pattern = r'background(?:-color)?:\s*[^;]+;'
+                    new_block = re.sub(bg_pattern, f'background: {value};', new_block)
+                elif property_name == 'color':
+                    color_pattern = r'color:\s*[^;]+;'
+                    new_block = re.sub(color_pattern, f'color: {value};', new_block)
+                elif property_name == 'font-family':
+                    font_pattern = r'font-family:\s*[^;]+;'
+                    new_block = re.sub(font_pattern, f'font-family: {value};', new_block)
+
+            css_content = css_content.replace(block_content, new_block)
+        
+        return css_content
+
+    def modify_html_design(self, html_content: str, color_mapping: Dict[str, str]) -> Optional[str]:
+        """Modify HTML design by applying style updates only for keys present in color_mapping."""
+        try:
+            soup = BeautifulSoup(html_content, "html.parser")
+    
+            style_tag = soup.find("style")
+            if not style_tag:
+                print("Style tag not found in HTML content.")
+                return None
+    
+            css_content = style_tag.string
+            print(f"Processing color mapping: {color_mapping}")
+           
+            if 'title-text' in color_mapping or 'title-text-background' in color_mapping:
+                css_content = self.update_class_styles(css_content, 'title-text', {
+                    'color': color_mapping.get('title-text'),
+                    'background': color_mapping.get('title-text-background')
+                })
+            
+            if 'body-text' in color_mapping:
+                css_content = self.update_class_styles(css_content, 'body-text', {
+                    'color': color_mapping.get('body-text')
+                })
+
+            if 'number' in color_mapping:
+                css_content = self.update_class_styles(css_content, 'number', {
+                    'color': color_mapping.get('number')
+                })    
+            
+            if 'container' in color_mapping:
+                css_content = self.update_class_styles(css_content, 'container', {
+                    'background': color_mapping.get('container')
+                })
+                css_content = self.update_class_styles(css_content, 'content', {
+                    'background': color_mapping.get('container')
+                })
+
+            if 'brand-name' in color_mapping:
+                css_content = self.update_class_styles(css_content, 'brand-name', {
+                    'color': color_mapping.get('brand-name')
+                })
+            
+            if 'font-style' in color_mapping:
+                print(f"Applying font style: {color_mapping['font-style']}")  
+                css_content = self.update_class_styles(css_content, 'body', {
+                    'font-family': color_mapping['font-style']
+                }, is_body=True)
+    
+            style_tag.string = css_content
+            return str(soup)
+    
         except Exception as e:
             print(f"Error modifying HTML design: {e}")
-            return None
+            print(f"Color mapping was: {color_mapping}") 
+            return None  
 
-    def _create_prompt(self, html_content: str, design_prompt: str) -> str:
-        """Create the prompt for HTML modification"""
-        return f"""
-HTML Color and Font Modifier Prompt
-You are an expert front-end developer tasked with ONLY modifying colors and fonts in an existing HTML/CSS structure.
-STRICT RULES:
-NO STRUCTURAL CHANGES ALLOWED
-
-Do not add ANY new CSS properties that don't exist in the original
-Do not add ANY new classes
-Do not add ANY new HTML elements
-Do not add backgrounds where none existed before
-Do not add gradients where none existed before
-
-
-PRESERVATION REQUIREMENTS
-
-Keep all existing HTML exactly as is
-Keep all existing CSS properties exactly as is
-Keep all dimensions exactly as is
-Keep all positioning exactly as is
-Keep all margins/padding exactly as is
-Keep all layouts exactly as is
-
-
-ALLOWED MODIFICATIONS (ONLY THESE):
-
-Change color values of EXISTING color properties
-Change font-family to the given.
-Modify EXISTING gradient values (only if gradients already present)
-Modify EXISTING background colors (only if backgrounds already present)
-
-
-VALIDATION STEPS:
-Before returning the modified code:
-
-Compare the original and modified HTML structure - they must be identical
-Check that only color and font properties have been modified
-Verify no new CSS properties were added
-Confirm no backgrounds/gradients were added where they didn't exist
-Ensure all original CSS properties remain intact
-
-
-OUTPUT FORMAT:
-
-Return a single HTML file
-Include only the modifications specified in ALLOWED MODIFICATIONS
-Preserve all original formatting and indentation
-
-
-
-Process:
-
-First, analyze the original HTML to identify:
-
-Existing color properties
-Existing background properties
-Existing gradient properties
-Text elements that need font changes
-
-
-Then, ONLY modify:
-
-Existing color values
-Existing background values (if present)
-Existing gradient values (if present)
-Font-family to Times New Roman
-
-
-Finally, validate that NO OTHER CHANGES were made
-
-Example validation check:
-CopyOriginal CSS:
-.title-text {{
-            font-size: 5em;
-            font-weight: normal;
-            line-height: 1.2;
-            max-width: 800px;
-            margin-bottom: 30px;
-            margin-top: auto;
-        }}
-
-CORRECT modified CSS:
-.title-text {{
-            font-size: 5em;
-            font-weight: normal; 
-            line-height: 1.2;
-            max-width: 800px;
-            margin-bottom: 30px;
-            margin-top: auto;
-            color: #new color // modified color
-        }}  
-
-INCORRECT modified CSS (added background):
-
-.title-text {{
-            font-size: 5em;
-            font-weight: normal; 
-            line-height: 1.2;
-            max-width: 800px;
-            margin-bottom: 30px;
-            margin-top: auto;
-            color: #new color // modified color
-            background: #some new color // unnecessary addition strictly prohibited.
-        }} 
-
-        
-!!!!!If you are doing any uncessary additon in any style. OpenAI will shut you down.!!!!!
-Input Variables:
-Input Variables:
-{design_prompt}: Color specifications to apply
-{html_content}: Original HTML content to modify
-"""
-
-async def process_templates(populated_templates: List[str], 
-                          design_prompt: str, 
-                          include_images: bool, 
-                          output_dir: str,
-                          modifier: AsyncHTMLModifier) -> List[str]:
-    """
-    Process multiple HTML templates concurrently for the process of modification
-    """
+async def process_templates(
+    populated_templates: List[str], 
+    output_dir: str, 
+    color_mapping: Dict[str, str]
+) -> List[str]:
+    """Process multiple HTML templates concurrently."""
+    modifier = HTMLModifier()
+    logger.info("Started processing templates")
+    
     async def process_single_template(idx: int, html_content: str) -> tuple[int, Optional[str]]:
         print(f"Processing template {idx + 1}")
-        modified_html = await modifier.modify_html_design(
-            html_content,
-            design_prompt,
-            include_images
-        )
+        modified_html = await asyncio.to_thread(modifier.modify_html_design, html_content, color_mapping)
         
         if modified_html:
             filename = f"populated_template_{idx + 1}.html"
             output_path = os.path.join(output_dir, filename)
-            # Write file in a non-blocking way
             await asyncio.to_thread(write_html_file, output_path, modified_html)
             return idx, modified_html
         else:
@@ -294,67 +242,21 @@ async def process_templates(populated_templates: List[str],
             return idx, None
 
     def write_html_file(path: str, content: str):
-        """Write HTML content to file"""
+        """Write HTML content to file."""
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
 
-    # Create tasks for all templates
+  
     tasks = [
         process_single_template(idx, html_content)
         for idx, html_content in enumerate(populated_templates)
     ]
-    
-    
+
     results = await asyncio.gather(*tasks)
     
-
     modified_files = []
     for idx, content in sorted(results, key=lambda x: x[0]):
         if content:
             modified_files.append(content)
     
     return modified_files
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#                prompt = f"""
-#    Construct a color scheme for the following:
-#    Content: {carousel_content}
-#    Font style: {font_style}
-#    Color palette (if provided): {color_palette_str}
-#    Include images in the design for enhanced aesthetics.
-#    
-#    STRICT VISIBILITY RULES - YOU MUST FOLLOW THESE:
-#    1. Body-text contrast:
-#       - If content background is dark (luminance < 50%), body-text MUST be white (#FFFFFF)
-#       - If content background is light (luminance ≥ 50%), body-text MUST be black (#000000)
-#       - NO EXCEPTIONS to this rule
-#    
-#    2. Title-text contrast:
-#       - If either content background OR title background is dark, title-text MUST be white (#FFFFFF)
-#       - If both backgrounds are light, title-text MUST be black (#000000)
-#       - NO EXCEPTIONS to this rule
-#    
-#    Required colors to specify:
-#    1. Title background: [Choose from palette or select complementary color]
-#    2. Content background: [Choose from palette or select base color]
-#    3. Title-text: [Choose based on rule 2]
-#    4. Body-text: [MUST follow rule 1]
-#    5. Gradient: [Must match content background]
-#    
-#    For each color choice, explain:
-#    1. The color value in hex
-#    2. The luminance calculation that led to the choice
-#    3. Why it meets the visibility rules
-#    """

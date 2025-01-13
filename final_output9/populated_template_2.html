@@ -4,121 +4,83 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>News Post</title>
+<title>Growth Post</title>
 <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Verdana;
-            min-height: 100vh;
-        }
-
-        .container {
             width: 1080px;
             height: 1080px;
+            font-family: Verdana;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            height: 100%;
             position: relative;
+            padding: 40px;
+            display: flex;
+            background: #fcf8f8;
             overflow: hidden;
         }
-
-        .image {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-
-        .image::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 1080px;
-            height: 1080px;
-            background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.1) 0%,
-                rgba(0,0,0,0.5) 70%,
-                rgba(0,0,0,1.0) 100%
-            );
-        }
-
-        .image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .title-text {
-            position: absolute;
-            bottom: 150px; /* Adjusted to make space for body-text */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            text-align: center;
-            color: white;
-            font-size: 3em;
-            font-weight: bold;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .body-text {
-            position: absolute;
-            bottom: 90px; /* Positioned below title-text */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            text-align: center;
-            color: #ffffff;
-            font-size: 1.5em;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-
         .logo {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 90px;
+            top: 40px;
+            right: 40px;
             height: 90px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 90px;
+            z-index: 2;
         }
-
         .logo img {
-            height: 50px;
+            height: 100%;
+            width: 100%;
             object-fit: contain;
         }
-
+        .title-text {
+            font-size: 4.5em;
+            font-weight: bold;
+            color: #000000;
+            line-height: 1.1;
+            max-width: 800px;
+            max-height: 400px;
+            position: absolute;
+            top: 23%;
+            left: 40px;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        .body-text {
+            font-size: 2.5em;
+            color: #000000;
+            max-width: 450px;
+            position: absolute;
+            bottom: 120px;
+            right: 40px;
+            text-align: right;
+        }
         .brand-name {
             position: absolute;
-            bottom: 20px; /* Adjusted to be below the body text */
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.3em;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            bottom: 80px;
+            left: 40px;
+            font-size: 2em;
+            color: #97123c;
+            writing-mode: vertical-lr;
+            transform: rotate(180deg);
         }
     </style>
 </head>
 <body>
 <div class="container">
-<div class="image">
-<img alt="Flight attendant demonstrating safety instructions" src="images\placeholder.jpg"/>
-</div>
-<div class="title-text">MEMGPT: A BREAKTHROUGH FRAMEWORK FOR MEMORY</div>
-<div class="body-text">MemGPT equips models like GPT-4 with extended memory.</div>
 <div class="logo">
-<img alt="The Tatva Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
+<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
 </div>
+<div class="title-text">The Tyrannical Voice</div>
+<div class="body-text">A song plays on repeat in my head, demanding I grind my teeth and blink. I'm determined to hide it from my interview panel, but I'm rumbled.</div>
 <div class="brand-name">@legalwires</div>
 </div>
 </body>

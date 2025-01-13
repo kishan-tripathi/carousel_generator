@@ -7,6 +7,10 @@ import time
 import hashlib
 import random
 import json
+from typing import List, Dict, Optional, Union
+import requests
+import logging
+from time import sleep
 import re
 import requests
 from selenium import webdriver
@@ -17,7 +21,9 @@ import numpy as np
 import webcolors
 import logging
 import logging.config
+from dotenv import load_dotenv
 
+load_dotenv()
 
 
 class ColorPaletteInput(Enum):
@@ -44,6 +50,103 @@ class UserIDGenerator:
         random_num = str(random.randint(1, 1000000))
         combined = (timestamp + random_num).encode('utf-8')
         return hashlib.sha256(combined).hexdigest()[:16]      
+    
+class LlamaAPIClient:
+    """
+    A simplified client for interacting with the Llama API.
+    Handles API calls, retries, and error management in a clean interface.
+    """
+    def __init__(
+        self,
+        model_path: str = "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4",
+        api_url: str = os.getenv('BASE_URL'),  # Replace with your E2E endpoint
+        auth_token: str = os.getenv('AUTH_TOKEN'),
+        max_retries: int = 3,
+        base_delay: float = 1.0
+    ):
+        self.model_path = model_path
+        self.api_url = api_url
+        self.auth_token = auth_token
+        self.max_retries = max_retries
+        self.base_delay = base_delay
+        self.logger = logging.getLogger(__name__)
+
+    def _make_request(self, messages: List[Dict[str, str]], max_tokens: int = 4096) -> dict:
+        """
+        Makes the actual API request with retry logic.
+        """
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.auth_token}"
+        }
+        
+        data = {
+            "model": self.model_path,
+            "messages": messages,
+            "temperature": 0.3,
+            "max_tokens": max_tokens,
+            "top_p": 0.9,
+        }
+
+        for attempt in range(self.max_retries):
+            try:
+                response = requests.post(
+                    self.api_url,
+                    headers=headers,
+                    json=data,
+                    verify=False,
+                    timeout=30
+                )
+                
+                if response.status_code in [400, 429]:
+                    self.logger.warning(f"Attempt {attempt + 1}: HTTP {response.status_code}")
+                    sleep(self.base_delay * (2 ** attempt))  # Exponential backoff
+                    continue
+                
+                response.raise_for_status()
+                return response.json()
+
+            except requests.exceptions.RequestException as e:
+                self.logger.error(f"Request error on attempt {attempt + 1}: {str(e)}")
+                if attempt == self.max_retries - 1:
+                    raise
+                sleep(self.base_delay * (2 ** attempt))
+                
+        raise Exception("Max retries exceeded")
+
+    def generate(
+        self,
+        prompt: Union[str, List[Dict[str, str]]],
+        max_tokens: int = 4096,
+        system_prompt: Optional[str] = None
+    ) -> str:
+        """
+        Generate a response from the model using either a simple string prompt
+        or a list of message dictionaries.
+        
+        Args:
+            prompt: Either a string prompt or a list of message dictionaries
+            max_tokens: Maximum tokens in the response
+            system_prompt: Optional system prompt to prepend
+            
+        Returns:
+            The model's response as a string
+        """
+        # Convert string prompt to proper message format
+        if isinstance(prompt, str):
+            messages = []
+            if system_prompt:
+                messages.append({"role": "system", "content": system_prompt})
+            messages.append({"role": "user", "content": prompt})
+        else:
+            messages = prompt
+
+        try:
+            response = self._make_request(messages, max_tokens)
+            return response['choices'][0]['message']['content']
+        except Exception as e:
+            self.logger.error(f"Generation failed: {str(e)}")
+            return ""    
 
 def handle_color_palette(input_type: ColorPaletteInput, color_input=None):
     """

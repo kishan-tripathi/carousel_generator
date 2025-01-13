@@ -142,6 +142,77 @@
     "template36.html": {
         "image_height": 1080,
         "image_width": 760
-    }    
-
+    },  
+    "template37.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template38.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template39.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template40.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template41.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template42.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template43.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template44.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template45.html": {
+        "image_height": 1080,
+        "image_width": 650
+    },
+    "template46.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template47.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template48.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template49.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template50.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template51.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template52.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template53.html": {
+        "image_height": 920,
+        "image_width": 540
+    },
+    "template54.html": {
+        "image_height": 920,
+        "image_width": 540
+    }   
 }

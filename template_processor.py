@@ -1,32 +1,37 @@
-import os
 import json
-import traceback
 import random
+import asyncio
+from pymongo import MongoClient
 from bs4 import BeautifulSoup
-import requests
-from dotenv import load_dotenv
-from openai import OpenAI
-#from flux import FluxImageGenerator  # Import the FluxImageGenerator class
+import traceback
+import os
+import logging
+from typing import List, Dict, Optional
 
-# Load environment variables
-load_dotenv()
+logger = logging.getLogger(__name__)
 
-class HTMLTemplateProcessor:
-    def __init__(self, 
-                 templates_dir='new_carousel_gen', 
-                 logos_dir='logos', 
-                 images_dir='images', 
-                 output_dir='populated_templates',
-                 template_specs_file='template_specifications.json'):
-        self.templates_dir = templates_dir
-        self.logos_dir = logos_dir
-        self.images_dir = images_dir
-        self.output_dir = output_dir
-        self.template_specs_file = template_specs_file
-        os.makedirs(self.output_dir, exist_ok=True)
-        
-        # Load template specifications
+class TemplateSelector:
+    def __init__(self, db_url="mongodb://localhost:27017/", db_name="layouts_database"):
+        logger.info("Initializing TemplateSelector with database: %s", db_name)
+        self.client = MongoClient(db_url)
+        self.db = self.client[db_name]
+        self.template_specs_file='template_specifications.json'
         self.template_specs = self.load_template_specifications()
+
+    def calculate_div_length(self, html_content, div_class):
+        try:
+            template_soup = BeautifulSoup(html_content, 'html.parser')
+            div = template_soup.find(class_=div_class)
+            if not div:
+                return 0
+
+            text_content = div.get_text(strip=True)
+            #return len(text_content) / 1.2 if text_content else 0                           ###########changed
+            return len(text_content)*1.8 if text_content else 0
+        except Exception as e:
+            logger.error("Error calculating div length for %s: %s", div_class, e, exc_info=True)
+            return 0
+        
 
     def load_template_specifications(self):
         try:
@@ -34,286 +39,141 @@ class HTMLTemplateProcessor:
                 return json.load(f)
         except Exception as e:
             print(f"Error loading template specifications: {e}")
-            return {}
-
-    def calculate_div_length(self, template_path, div_class):
-        try:
-            with open(template_path, 'r', encoding='utf-8') as f:
-                template_soup = BeautifulSoup(f, 'html.parser')
-            
-            div = template_soup.find(class_=div_class)
-            if not div:
-                return 0
-            
-            text_content = div.get_text(strip=True)
-            if text_content:
-                return len(text_content)/1.2
-            
-            default_lengths = {
-                'title-text': 60,
-                'body-text': 150
-            }
-            return default_lengths.get(div_class, 100)
-        except Exception as e:
-            print(f"Error calculating div length for {div_class} in {template_path}: {e}")
-            return 0
-        
-    def update_brand_template(self ,template_path: str, brand_config: dict):
-        """
-        Overwrite the brand template file with the provided configuration.
-        
-        Parameters:
-        template_path (str): Path to the brand template file
-        brand_config (dict): Dictionary containing brand configuration data
-        """
-        try:
-            # Overwrite the file with the new brand configuration
-            with open(template_path, 'w') as file:
-                json.dump(brand_config, file, indent=4)
-            print("Brand template overwritten successfully.")
-        except Exception as e:
-            print(f"Error overwriting template: {e}")       
-
+            return {}    
 
     def select_templates(self, num_pages, brand_config):
-        """
-        Select templates based on brand configuration.
-        """
         try:
-            # Extract logo and include_images from the brand configuration
-            logo_path = brand_config.get('logo')
-            include_images = brand_config.get('include_images', True)  # Default to True if not provided
-    
-            # Determine which main layout directory to use
-            if logo_path and include_images:
-                main_layout_dir = 'layouts_lit'
-            elif logo_path and not include_images:
-                main_layout_dir = 'layouts_lt'
-            elif not logo_path and include_images:
-                main_layout_dir = 'layouts_it'
-            else:
-                main_layout_dir = 'layouts_t'
-    
-            # Ensure the main layout directory exists
-            if not os.path.isdir(main_layout_dir):
-                print(f"Main layout directory does not exist: {main_layout_dir}")
+            logo_path = brand_config.get("logo")
+            include_images = brand_config.get("include_images", True)
+
+            main_layout_collection = (
+                "layouts_lit" if logo_path and include_images else
+                "layouts_lt" if logo_path else
+                "layouts_it" if include_images else
+                "layouts_t"
+            )
+
+            if main_layout_collection not in self.db.list_collection_names():
+                logger.warning("Collection '%s' not found in database.", main_layout_collection)
                 return None
-    
-            # Get all subdirectories (layout1 to layout5) within the chosen main layout directory
-            subdirs = [
-                os.path.join(main_layout_dir, d) 
-                for d in os.listdir(main_layout_dir) 
-                if os.path.isdir(os.path.join(main_layout_dir, d)) and d.startswith('layout') and d[6:].isdigit() and 1 <= int(d[6:]) <= 5
+
+            collection = self.db[main_layout_collection]
+            layouts = list(collection.find({}, {"_id": 0, "layout": 1, "files": 1}))
+
+            if not layouts:
+                logger.warning("No layouts found in collection '%s'.", main_layout_collection)
+                return None
+
+            selected_layout = random.choice(layouts)
+            html_files = selected_layout.get("files", [])
+            if not html_files:
+                logger.warning("No files found in the selected layout.")
+                return None
+
+            selected_files = html_files[:min(len(html_files), num_pages)]
+            result = [
+                {
+                    "collection": main_layout_collection,
+                    "layout": selected_layout["layout"],
+                    "filename": file.get("file_name", "default_filename.html"),
+                    "title_length": self.calculate_div_length(file.get("content", ""), "title-text"),
+                    "content_length": self.calculate_div_length(file.get("content", ""), "body-text"),
+                    "content": file.get("content", ""),
+                    "path": file.get("file_name", "default_filename.html")
+                }
+                for file in selected_files if file.get("content")
             ]
-    
-            if not subdirs:
-                print(f"No subdirectories found in main layout directory: {main_layout_dir}")
+
+            if len(result) < num_pages:
+                logger.warning("Requested %d pages, but only %d templates are available.", num_pages, len(result))
                 return None
-    
-            # Randomly select one subdirectory
-            selected_subdir = random.choice(subdirs)
-    
-            # Get all HTML templates from the selected subdirectory
-            templates = []
-            for root, _, files in os.walk(selected_subdir):
-                templates.extend([
-                    os.path.join(root, f) 
-                    for f in files 
-                    if f.endswith('.html')
-                ])
-    
-            if not templates:
-                print(f"No templates found in subdirectory: {selected_subdir}")
-                return None
-    
-            # Select templates and calculate metadata
-            selected_templates = []
-            for template in templates[:min(len(templates), num_pages)]:  # Sequential selection
-                title_length = self.calculate_div_length(template, 'title-text')
-                body_length = self.calculate_div_length(template, 'body-text')
-                selected_templates.append({
-                    'path': template,
-                    'title_length': title_length,
-                    'body_length': body_length
-                })
-                
-            if len(selected_templates) < num_pages:
-                print("Not enough templates available to meet the requested number of pages.")
-                return None
-    
-            return selected_templates
-    
+
+            return result
         except Exception as e:
-            print(f"Error in select_templates: {e}")
-            return None    
+            logger.error("Error in select_templates: %s", e, exc_info=True)
+            return None
 
-
-    def populate_templates(self, carousel_content, template_info):
+    async def populate_single_template(
+        self,
+        page: Dict,
+        template_content: str,
+        brand_config: Dict,
+        index: int
+    ) -> Optional[str]:
         try:
-            print("Initial carousel_content type:", type(carousel_content))
-            print("Initial template_info type:", type(template_info))
-            
-            # Extract pages from carousel_content
-            pages = carousel_content if isinstance(carousel_content, list) else carousel_content.get('pages', [])
-            print(f"Found {len(pages)} pages to process")
-    
-            # Create a mapping of template filenames to their content
-            template_map = {}
-            
-            # Handle template_info as a list of template objects
-            if isinstance(template_info, list):
-                for template in template_info:
-                    if isinstance(template, dict):
-                        filename = template.get('filename', '')
-                        content = template.get('content', '')
-                        if filename and content:
-                            base_name = filename.replace('.html', '')
-                            template_map[filename] = content
-                            template_map[base_name] = content
-                            template_map[f"{base_name}.html"] = content
-    
-            if not template_map:
-                print("Warning: No valid template content found in template_info")
-                return None
-    
-            print(f"Available templates: {list(template_map.keys())}")
-    
-            populated_templates = []
-            for i, page in enumerate(pages):
-                try:
-                    template_path = page.get('template_path', '')
-                    if not template_path:
-                        print(f"Warning: No template path found for page {i+1}")
-                        continue
-    
-                    template_name = os.path.basename(template_path)
-                    template_content = template_map.get(template_name)
-                    
-                    if not template_content:
-                        print(f"Warning: Template {template_name} not found in template_info")
-                        template_name = template_name.replace('.html', '')
-                        template_content = template_map.get(template_name)
-                        if not template_content:
-                            continue
-    
-                    print(f"Processing template: {template_name}")
-                    
-                    # Parse and update template
-                    template_soup = BeautifulSoup(template_content, 'html.parser')
-    
-                    # Update title
-                    title_div = template_soup.find(class_='title-text')
-                    if title_div and 'title' in page:
-                        title_div.string = page['title']
-    
-                    # Update body content
-                    body_div = template_soup.find(class_='body-text')
-                    if body_div and 'content' in page:
-                        body_div.string = page['content']
-    
-                    # Update logo
-                    logo_div = template_soup.find(class_='logo')
-                    if logo_div:
-                        logo_img = logo_div.find('img')
-                        if logo_img and 'logo' in page:
-                            logo_img['src'] = page['logo']
-    
-                    # Update content image
-                    content_img = template_soup.find(class_='image')
-                    if content_img:
-                        img_tag = content_img.find('img')
-                        if img_tag and 'image' in page:
-                            img_tag['src'] = page['image']
-    
-                    populated_templates.append(str(template_soup))
-                    print(f"Successfully processed page {i+1}")
-    
-                except Exception as e:
-                    print(f"Error processing page {i+1}: {e}")
-                    traceback.print_exc()
-                    continue
-    
-            if not populated_templates:
-                print("Warning: No templates were successfully populated")
-                return None
-    
-            return populated_templates
-    
+            template_soup = await asyncio.to_thread(BeautifulSoup, template_content, 'html.parser')
+
+            if (title_div := template_soup.find(class_='title-text')) and 'title' in page:
+                title_div.string = page['title']
+
+            if (body_div := template_soup.find(class_='body-text')) and 'content' in page:
+                body_div.string = page['content']
+
+            if (brand_div := template_soup.find(class_='brand-name')) and 'brand_name' in brand_config:
+                brand_div.string = brand_config['brand_name']
+
+            if (logo_div := template_soup.find(class_='logo')) and (logo_img := logo_div.find('img')):
+                logo_img['src'] = page.get('logo', '')
+
+            if (content_img := template_soup.find(class_='image')) and (img_tag := content_img.find('img')):
+                img_tag['src'] = page.get('image', '')
+
+            result = await asyncio.to_thread(str, template_soup)
+            return result
+
         except Exception as e:
-            print(f"Error populating templates: {e}")
-            traceback.print_exc()
-            return None    
-    
-    
-### For retrieving the templates from local dir.   
-    
-    #def populate_templates(self, carousel_content):
-    #    try:
-    #        
-    #        content_data = carousel_content
-#
-    #        pages = content_data['pages']
-    #        populated_templates = []
-#
-    #        for i, page in enumerate(pages):
-    #            # Get the template path from the content
-    #            template_path = page['template_path']
-    #            
-    #            # If the path doesn't exist, try to find the template in the layout directory
-    #            if not os.path.exists(template_path):
-    #                template_name = os.path.basename(template_path)
-    #                layout_dir = os.path.dirname(template_path)
-    #                if not os.path.exists(layout_dir):
-    #                    # Try to find the template in any layout directory
-    #                    for layout in os.listdir(self.templates_dir):
-    #                        possible_path = os.path.join(self.templates_dir, layout, template_name)
-    #                        if os.path.exists(possible_path):
-    #                            template_path = possible_path
-    #                            break
-#
-    #            with open(template_path, 'r', encoding='utf-8') as f:
-    #                template_soup = BeautifulSoup(f, 'html.parser')
-#
-    #            title_div = template_soup.find(class_='title-text')
-    #            if title_div:
-    #                title_div.string = page['title']
-#
-    #            body_div = template_soup.find(class_='body-text')
-    #            if body_div and 'content' in page:
-    #                body_div.string = page['content']
-#
-#
-    #            logo_div = template_soup.find(class_='logo')
-    #            if logo_div:
-    #                logo_img = logo_div.find('img')
-    #                if logo_img:
-    #                    if os.path.exists(page['logo']):
-    #                        # Update the src attribute of the <img> tag
-    #                        logo_img['src'] = page['logo']
-    #                    else:
-    #                        print(f"Warning: Logo file not found at {page['logo']}")
-    #                else:
-    #                    print("Warning: <img alt='Logo'> tag not found within .logo class")
-    #            else:
-    #                print("Warning: .logo class not found")                
-    #            
-#
-    #            content_img = template_soup.find(class_='image')
-    #            if content_img:
-    #                img_tag = content_img.find('img')
-    #                if img_tag:
-    #                    img_tag['src'] = page['image']
-#
-    #            output_path = os.path.join(self.output_dir, f'populated_template_{i + 1}.html')
-    #            with open(output_path, 'w', encoding='utf-8') as f:
-    #                f.write(str(template_soup))
-#
-    #            #populated_templates.append(output_path)
-    #            populated_templates.append(str(template_soup))
-#
-    #        return populated_templates
-    #    except Exception as e:
-    #        print(f"Error populating templates: {e}")
-    #        return None
+            logger.error(f"Error populating page {index + 1}: {str(e)}", exc_info=True)
+            return None
 
+    async def populate_templates(
+        self,
+        carousel_content: Dict,
+        template_info: List[Dict],
+        brand_config: Dict
+    ) -> Optional[List[str]]:
+        try:
+            pages = (carousel_content if isinstance(carousel_content, list)
+                     else carousel_content.get('pages', []))
 
+            template_map = {
+                t.get('filename', '').replace('.html', ''): t.get('content', '')
+                for t in template_info
+                if isinstance(t, dict) and t.get('filename') and t.get('content')
+            }
+
+            
+
+            tasks = []
+            for i, page in enumerate(pages):
+                template_path = page.get('template_path', '')
+                template_name = os.path.basename(template_path).replace('.html', '')
+                template_content = template_map.get(template_name)
+
+                if not template_content:
+                    logger.warning(f"Template '{template_name}' not found for page {i + 1}.")
+                    continue
+
+                task = self.populate_single_template(
+                    page=page,
+                    template_content=template_content,
+                    brand_config=brand_config,
+                    index=i
+                )
+                tasks.append(task)
+
+            if not tasks:
+                logger.warning("No valid templates to process.")
+                return None
+
+            results = await asyncio.gather(*tasks)
+            populated_templates = [r for r in results if r is not None]
+
+            if not populated_templates:
+                logger.warning("No templates were successfully populated.")
+                return None
+
+            return populated_templates
+
+        except Exception as e:
+            logger.error(f"Error populating templates: {str(e)}", exc_info=True)
+            return None

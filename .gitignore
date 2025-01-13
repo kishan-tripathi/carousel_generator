@@ -3,14 +3,25 @@ app2.py
 test.py
 test2.py
 app3.py
+brand_template.json
+colors.json
+content.json
+modified_templates/
+populated_templates/
+extracted_images/
+
+
 
 logos/
 images/
 final_images/
+article_contentgen.py
 article_contentgen2.py
 article_contentgen3.py
-design_modifier.py
+design_modifier2.py
+design_modifier3.py
 main2.py
-template_processor.py
+template_processor_old.py
+template_processorn.py
 html_to_png.py
 logs/

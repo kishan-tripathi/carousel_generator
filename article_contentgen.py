@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
-from template_processor import HTMLTemplateProcessor
+from template_processor_old import HTMLTemplateProcessor
 import logging
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,7 @@ class ArticleCarouselGenerator:
         Generate an article on this topic in around 3000 words. Topic:{topic}
         """
         response = self.client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
                 {"role": "user", "content": prompt}
@@ -350,7 +350,7 @@ class ArticleCarouselGenerator:
 
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "You are an expert at creating detailed image generation prompts."},
                     {"role": "user", "content": prompt}
