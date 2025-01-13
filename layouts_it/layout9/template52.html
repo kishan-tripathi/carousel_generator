@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Post</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1080px;
+            height: 1080px;
+            font-family: Arial, sans-serif;
+            position: relative;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            background: #1a2942;
+        }
+
+        .image {
+            position: absolute;
+            width: 50%;
+            height: 85%;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            overflow: hidden;
+            border-radius: 100px 0 0 100px;
+        }
+
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            clip-path: polygon(0 0, 100% 0, 95% 100%, 0 100%);
+            z-index: 2;
+        }
+
+
+        .arrow {
+            position: absolute;
+            right: 40px;
+            top: 40px;
+            font-size: 28px;
+            color: #1a2942;
+            background: white;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 30px;
+            z-index: 3;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .title-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: white;
+            text-align: left;
+            margin-bottom: 30px;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .body-text {
+            font-size: 30px;
+            color: rgba(255,255,255,0.9);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="title-text">
+                'We'll never let our land be used against India': Sri Lankan President 
+            </div>
+
+            <div class="body-text">
+                After meeting PM Modi in Delhi, on a state visit, he met President Murmu 
+                and will also visit Bihar's Bodh Gaya he met President Murmu 
+                and will also visit Bihar's Bodh Gaya.
+            </div>
+        </div>
+
+        <div class="image">
+            <img src="C:\Users\shash\Downloads\ac093c6e-7de3-4daa-9f70-3dd8f9e19a86.jpeg" alt="Image">
+        </div>
+        <div class="arrow">➜</div>
+    </div>
+</body>
+</html>

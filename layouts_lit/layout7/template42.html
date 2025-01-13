@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>News Post</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1080px;
+            height: 1080px;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image {
+            height: 60%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff);
+        }
+
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .content {
+            height: 40%;
+            background: white;
+            padding: 30px 60px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .logo {
+            position: absolute;
+            top: -45px;
+            left: 60px;
+            height: 90px;
+            width: 90px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .logo img {
+            height: 100%;
+            width: 100%;
+        }
+
+        .arrow {
+            font-size: 28px;
+            color: #1a2942;
+            margin: 20px 0;
+            transform: rotate(-45deg);
+        }
+
+        .title-text {
+            font-size: 3.8em;
+            font-weight: bold;
+            color: #1a2942;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            max-width: 90%;
+            background: linear-gradient(120deg, #1a2942, #2a3952);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .body-text {
+            font-size: 1.8em;
+            color: #555;
+            line-height: 1.5;
+            max-width: 80%;
+        }
+
+        .brand-name {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            font-size: 1.5em;
+            color: #1a2942;
+            font-weight: 500;
+            padding: 10px 20px;
+            border: 2px solid #1a2942;
+            border-radius: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image">
+            <img alt="News Image" src="C:\Users\shash\OneDrive\Documents\new_carousel_gen\images\2fc15152-0d8c-4651-b635-f7700a926b81_page_2.jpg"/>
+        </div>
+        <div class="content">
+            <div class="logo">
+                <img src="C:\ucarousel_gen\logos\lexLogo.svg.svg" alt="Logo">
+            </div>
+            <div class="arrow">↘</div>
+            <div class="title-text">ISRAEL ASSERTS CONTROL IN GOLAN HEIGHTS</div>
+            <div class="body-text">Israel has seized key territories in the Golan Heights, citing national security amidst Assad regime collapse.</div>
+            <div class="brand-name">www.legalwires.com</div>
+        </div>
+    </div>
+</body>
+</html>

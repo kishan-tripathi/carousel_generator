@@ -1,4 +1,4 @@
-from article_contentgen3 import ArticleCarouselGenerator
+from article_contentgen import ArticleCarouselGenerator
 from template_processor import TemplateSelector
 from design_modifier import  HTMLModifier ,process_templates 
 from html_png import async_html_to_png
@@ -226,7 +226,7 @@ if __name__ == "__main__":
         'color_palette_type': ColorPaletteInput.URL,
         'color_palette_input':  "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans",
         'uploaded_logo': uploaded_logo_simulation,  
-        'include_images': False,
+        'include_images': True,
         'font_style': "Verdana",
         'brand_name':"@legalwires"
     }

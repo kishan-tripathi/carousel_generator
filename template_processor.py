@@ -26,8 +26,8 @@ class TemplateSelector:
                 return 0
 
             text_content = div.get_text(strip=True)
-            #return len(text_content) / 1.2 if text_content else 0                           ###########changed
-            return len(text_content)*1.8 if text_content else 0
+            return len(text_content) / 1.8 if text_content else 0                           ###########changed
+            #return len(text_content)*0.8 if text_content else 0
         except Exception as e:
             logger.error("Error calculating div length for %s: %s", div_class, e, exc_info=True)
             return 0

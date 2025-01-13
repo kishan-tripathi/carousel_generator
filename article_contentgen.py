@@ -12,47 +12,6 @@ import logging
 logger = logging.getLogger(__name__)
 load_dotenv()
 
-#class FluxImageGeneratorAPI:
-#    def __init__(self, api_url="http://localhost:5000/generate"):
-#        self.api_url = api_url
-#
-#    def generate_image(self, prompt, height, width, output_path, seed=None):
-#        """
-#        Generate an image via the Flux Flask API.
-#        
-#        Args:
-#            prompt (str): Image generation prompt.
-#            height (int): Image height.
-#            width (int): Image width.
-#            output_path (str): Path to save the generated image.
-#            seed (int): Random seed for reproducibility.
-#        
-#        Returns:
-#            str: Path to the generated image or None on failure.
-#        """
-#        try:
-#            payload = {
-#                "prompt": prompt,
-#                "height": height,
-#                "width": width,
-#                "seed": seed
-#            }
-#            response = requests.post(self.api_url, json=payload)
-#            response.raise_for_status()
-#            
-#            # Decode the image from the base64 response
-#            image_base64 = response.json().get("response")
-#            if image_base64:
-#                with open(output_path, "wb") as f:
-#                    f.write(base64.b64decode(image_base64))
-#                return output_path
-#            else:
-#                print("Error: No image data in API response.")
-#                return None
-#        except requests.exceptions.RequestException as e:
-#            print(f"Error calling Flux API: {e}")
-#            return None
-
 class FluxImageGeneratorAPI:
     def __init__(self, api_url="https://ead1-2401-4900-8842-395a-69a1-ea1f-354-55b.ngrok-free.app/generate"):
         """
@@ -170,75 +129,6 @@ class ArticleCarouselGenerator:
         return content
 
 
-    #def generate_carousel_content(self, article_text, template_info):
-    #    """
-    #    Generate carousel content using OpenAI API
-    #    
-    #    Args:
-    #        article_text (str): The article text to base content on
-    #        template_info (list): List of template information
-    #    
-    #    Returns:
-    #        dict: Parsed JSON content for carousel
-    #    """
-    #
-    #    prompt = f"""
-    #    Break down the following article into {len(template_info)} pages.
-    #    Each page must adhere to the title and body text length constraints provided. And try to generate text a little less than the constraint. Length is the number of characters.
-    #
-    #    Constraints:
-    #    {json.dumps(template_info, indent=2)}
-    #
-    #    Output Format:
-    #    {{
-    #        "pages": [
-    #            {{
-    #                "title": "Page title (adhering to constraints) should be all in uppercase",
-    #                "content": "Page body text (optional) (adhering to constraints) generate text half size of given size constraint i.e., number of characters",
-    #                "template_path": "Path to template",
-    #                "image": "Path to image",
-    #                "logo": "Path to logo"
-    #            }}
-    #        ]
-    #    }}
-    #
-    #    Create engaging and meaningful content that flows naturally across pages while maintaining the article's core message and narrative structure. Each page should work both independently and as part of the sequence.
-    #
-    #    Article Text:
-    #    {article_text[:4500]}"""
-    #
-    #    try:
-    #        response = self.client.chat.completions.create(
-    #            model="gpt-4o",
-    #            messages=[
-    #                {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
-    #                {"role": "user", "content": prompt}
-    #            ]
-    #        )
-    #        
-    #        # Extract the content from the response
-    #        content = response.choices[0].message.content
-    #        print("Generated content:", content)
-    #        
-    #        # Remove markdown formatting if present
-    #        if content.startswith('```json'):
-    #            content = content.replace('```json\n', '').replace('\n```', '')
-    #        
-    #        # Parse the JSON content
-    #        json_content = json.loads(content)
-    #        
-    #        # Validate the structure
-    #        if not isinstance(json_content, dict) or 'pages' not in json_content:
-    #            raise ValueError("Invalid JSON structure")
-    #        
-    #        # Match template paths from template_info to the generated content
-    #        for i, page in enumerate(json_content['pages']):
-    #            if i < len(template_info):
-    #                page['template_path'] = template_info[i]['path']
-    #                
-    #        return json_content
-
-
     def generate_carousel_content(self, article_text, template_info):
         """
         Generate carousel content using OpenAI API
@@ -285,7 +175,7 @@ class ArticleCarouselGenerator:
     
         try:
             response = self.client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[
                     {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
                     {"role": "user", "content": prompt}
@@ -358,7 +248,9 @@ class ArticleCarouselGenerator:
             )
             print( f"this is response {response}")
             response_content = response.choices[0].message.content
-            response_content = response_content.replace('```json', '').replace('```', '').strip()
+            
+            if response_content.startswith('```json'):
+                response_content = response_content.replace('```json\n', '').replace('\n```', '')
             
             image_prompts = json.loads(response_content)
 

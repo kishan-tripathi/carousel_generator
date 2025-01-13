@@ -4,13 +4,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Growth Post</title>
+<title>News Post</title>
 <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             width: 1080px;
             height: 1080px;
@@ -19,69 +20,95 @@
             align-items: center;
             justify-content: center;
         }
+
         .container {
+            display: flex;
             width: 100%;
             height: 100%;
             position: relative;
-            padding: 40px;
-            display: flex;
-            background: #fcf8f8;
             overflow: hidden;
         }
+
+        .image {
+            flex: 1;
+            display: flex;
+        }
+
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Ensures the image scales properly */
+        }
+
+        .content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: #ececec;
+            position: relative; /* To position the brand name at the bottom */
+        }
+
         .logo {
-            position: absolute;
-            top: 40px;
-            right: 40px;
             height: 90px;
             width: 90px;
-            z-index: 2;
+            margin-bottom: 20px;
         }
+
         .logo img {
-            height: 100%;
-            width: 100%;
-            object-fit: contain;
+            height: 90px;
+            width: 90px;
         }
+
+        .arrow {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
         .title-text {
-            font-size: 4.5em;
+            font-size: 4em;
             font-weight: bold;
-            color: #000000;
-            line-height: 1.1;
-            max-width: 800px;
-            max-height: 400px;
-            position: absolute;
-            top: 23%;
-            left: 40px;
-            transform: translateY(-50%);
-            z-index: 2;
+            color: #ffffff;
+            background: #9d1d20;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px; 
         }
+
         .body-text {
-            font-size: 2.5em;
-            color: #000000;
-            max-width: 450px;
-            position: absolute;
-            bottom: 120px;
-            right: 40px;
-            text-align: right;
-        }
-        .brand-name {
-            position: absolute;
-            bottom: 80px;
-            left: 40px;
             font-size: 2em;
-            color: #97123c;
-            writing-mode: vertical-lr;
-            transform: rotate(180deg);
+            color: #000000;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .brand-name {
+            font-size: 1.5em;
+            color: #940b52;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px; /* Fixes the brand name at the bottom */
+            width: 100%; /* Makes the brand name span across the content area */
         }
     </style>
 </head>
 <body>
 <div class="container">
+<div class="content">
 <div class="logo">
 <img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
 </div>
-<div class="title-text">Breaking Free</div>
-<div class="body-text">I'm working to break free from my self-sabotaging tendencies. It's a journey, but I'm determined to succeed.</div>
+<div class="arrow">➜</div>
+<div class="title-text">NEUROSCIENCE INSIGHT</div>
+<div class="body-text">Recent neuroscience research reveals insights into self-sabotage. Professor Tobias Hauser studies OCD, noting neurotransmitter imbalances that hinder thoughts' regulation. This speaks volumes about our brain's role in our actions.</div>
 <div class="brand-name">@legalwires</div>
+</div>
+<div class="image">
+<img alt="Image" src="images\placeholder.jpg"/>
+</div>
 </div>
 </body>
 </html>

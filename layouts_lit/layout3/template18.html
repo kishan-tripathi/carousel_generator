@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
@@ -37,7 +36,7 @@
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; 
+            object-fit: cover; /* Ensures the image scales properly */
         }
 
         .content {
@@ -46,6 +45,7 @@
             flex-direction: column;
             padding: 20px;
             background: #f5f5f5;
+            position: relative; /* To position the brand name at the bottom */
         }
 
         .logo {
@@ -79,16 +79,18 @@
             font-size: 2em;
             color: #333;
             line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        .watermark {
-            margin-top: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            font-size: 14px;
+        .brand-name {
+            font-size: 1.5em;
+            color: #333;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 20px; /* Fixes the brand name at the bottom */
+            width: 100%; /* Makes the brand name span across the content area */
         }
     </style>
 </head>
@@ -99,11 +101,12 @@
         <img src="C:\ucarousel_gen\logos\lexLogo.svg.svg" alt="Logo">
     </div>
     <div class="arrow">➜</div>
-    <div class="title-text">INTERNATIONAL CONCERNS OVER BUFFER ZONE INCURSIONS</div>
-    <div class="body-text">Israel's buffer zone actions breach international agreements, causing global concern amid tensions.targeted Syria with 250 air strikes in 48 hours, escalating regional tensions.</div>
+    <div class="title-text">ISRAEL ASSERTS CONTROL IN GOLAN HEIGHTS</div>
+    <div class="body-text">Israel has seized key territories in the Golan Heights, citing national security amidst Assad regime collapse. Targeted Syria with 250 air strikes in 48 hours, escalating regional tensions.</div>
+    <div class="brand-name">Your Brand Name</div>
 </div>
 <div class="image">
-<img alt="Image" src="C:\Users\shash\Downloads\569ea63d-c446-424d-8a3d-f3ae1f940ef0.jpeg"/>
+    <img alt="Image" src="C:\Users\shash\Downloads\11738e12-9088-41a5-906e-b15f74952a78.jpeg"/>
 </div>
 </div>
 </body>
