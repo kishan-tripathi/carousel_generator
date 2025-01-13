@@ -9,7 +9,7 @@ import json
 from dotenv import load_dotenv
 from openai import OpenAI
 import logging
-from test2 import LlamaAPIClient
+from utils import LlamaAPIClient
 
 logger = logging.getLogger(__name__)
 

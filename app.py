@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException, Form
 from fastapi.responses import StreamingResponse
+from fastapi import BackgroundTasks
 from enum import Enum
 from typing import List, Optional, Union
 from pydantic import BaseModel, Field, HttpUrl
@@ -79,6 +80,8 @@ async def create_download_zip(user_id: str) -> BytesIO:
     zip_buffer.seek(0)
     return zip_buffer
 
+
+
 @app.post("/generate-article/")
 async def generate_article(
     request: str = Form(...),
@@ -149,7 +152,7 @@ async def generate_article(
                 for file in glob.glob(os.path.join("logos", f"{user_id}*")):
                     os.remove(file)
             except Exception as e:
-                print(f"Error during cleanup: {e}")
+                print(f"Error during cleanup: {e}")              
 
        
         asyncio.create_task(cleanup_user_files())

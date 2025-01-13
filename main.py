@@ -151,7 +151,7 @@ def main(
 
 
         logger.info("Started conversion of html to png")
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
 
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
@@ -190,7 +190,7 @@ def main(
         
         logger.info(" converting the html to png files.")
         
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
         
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
