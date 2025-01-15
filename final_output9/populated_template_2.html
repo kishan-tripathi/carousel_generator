@@ -15,99 +15,133 @@
         body {
             width: 1080px;
             height: 1080px;
-            font-family: Helvetica;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-family: Verdana;
+            position: relative;
         }
 
         .container {
-            display: flex;
             width: 100%;
             height: 100%;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .image {
-            flex: 1;
-            display: flex;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures the image scales properly */
+            object-fit: cover;
         }
 
         .content {
-            flex: 1;
+            width: 90%;
+            height: auto;
+            background: #f9f8fa;
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            background: #096d6d;
-            position: relative; /* To position the brand name at the bottom */
+            justify-content: flex-start;
+            border-radius: 15px;
+            
         }
 
         .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
             height: 90px;
             width: 90px;
-            margin-bottom: 20px;
+            padding: 5px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .logo img {
-            height: 90px;
-            width: 90px;
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
         }
 
         .arrow {
+            position: absolute;
+            top: 50%;
+            right: -30px;
             font-size: 24px;
-            margin-bottom: 20px;
+            background: #1a2942;
+            color: white;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
         }
 
         .title-text {
-            font-size: 4em;
+            font-size: 2.8em;
             font-weight: bold;
-            color: #fefdfd;
+            color: #ffffff;
             background: #97123c;
-            padding: 10px;
-            text-align: center;
             margin-bottom: 20px;
-            border-radius: 5px; 
+            text-align: left;
+            padding: 15px 25px;
+            border-radius: 10px;
+            transform: translateY(-50px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .body-text {
-            font-size: 2em;
+            font-size: 22px;
             color: #000000;
-            line-height: 1.5;
-            margin-bottom: 20px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            padding: 0 10px;
         }
 
         .brand-name {
-            font-size: 1.5em;
+            font-size: 20px;
             color: #c16e15;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
+            font-weight: bold;
+            text-align: right;
             position: absolute;
-            bottom: 20px; /* Fixes the brand name at the bottom */
-            width: 100%; /* Makes the brand name span across the content area */
+            bottom: 20px;
+            right: 30px;
+            width: auto;
+            padding: 10px 20px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.8);
         }
     </style>
 </head>
 <body>
 <div class="container">
-<div class="content">
-<div class="logo">
-<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\87002259-79f1-4827-949c-d1d320d58452logo_.svg"/>
-</div>
-<div class="arrow">➜</div>
-<div class="title-text">A CHALLENGING EXPERIENCE</div>
-<div class="body-text">Suddenly, recounting my tale felt difficult, akin to conversing in a nightclub. I fought to suppress the chaotic tune, determined not to reveal my internal struggle. However, I realized my nervous blinking gave me away to the head of department.</div>
-<div class="brand-name">www.carouselgen.com</div>
-</div>
 <div class="image">
 <img alt="Image" src="images\placeholder.jpg"/>
+</div>
+<div class="logo">
+<img alt="logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
+</div>
+<div class="content">
+<div class="title-text">DEALING WITH OCD AND ITS CHALLENGES</div>
+<div class="body-text">Obsessive-compulsive disorder can complicate daily communication and tasks. Awareness of triggers is crucial for management. Seek coping strategies.</div>
+<div class="arrow">➜</div>
+<div class="brand-name">@legalwires</div>
 </div>
 </div>
 </body>

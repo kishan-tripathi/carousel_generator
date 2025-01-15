@@ -6,7 +6,7 @@ client = MongoClient("mongodb://localhost:27017/")  # Update with your MongoDB U
 db = client['layouts_database']
 
 # Base directory (update this to the path where your layout directories are stored)
-base_dir = "C:\\Users\\shash\\OneDrive\\Documents\\new_carousel_gen"
+base_dir = "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator"
 
 # Loop through each main layout directory
 for main_dir in ["layouts_it", "layouts_lit", "layouts_lt", "layouts_t"]:

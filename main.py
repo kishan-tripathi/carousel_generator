@@ -5,12 +5,13 @@ from html_png import async_html_to_png
 from utils import UserIDGenerator
 import asyncio
 import json
+import os
 from io import BytesIO
 import time 
 import time
 from io import BytesIO
-from utils import ColorPaletteInput, handle_color_palette,handle_logo_upload, cleanup_files
-from utils import setup_logging
+from extract_colors import ColorPaletteInput,handle_color_palette
+from utils import setup_logging, handle_logo_upload, cleanup_files
 import logging
 
 
@@ -151,7 +152,7 @@ def main(
 
 
         logger.info("Started conversion of html to png")
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
 
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
@@ -170,15 +171,17 @@ def main(
     else:
         logger.info("No matching layouts found. Proceeding with design modification process.")
         print("Populated templates:")
-        for template in populated_templates:
-            print(template)
+        #for template in populated_templates:
+        #    print(template)
         
         design_json = modifier.generate_design_prompt(brand_config,carousel_content)
         
         print(design_json)
         logger.info("prompt json generated")
 
-        output_dir = "C:\\Users\\shash\\OneDrive\\Documents\\carousel_generator\\final_output9"
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        output_dir = os.path.join(base_dir, "final_output9")
+        os.makedirs(output_dir, exist_ok=True)
 
         logger.info("Started color modification")
         modified_files = asyncio.run(process_templates(
@@ -190,7 +193,7 @@ def main(
         
         logger.info(" converting the html to png files.")
         
-        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images', brand_config))
+        results = asyncio.run(async_html_to_png(modified_files, "container", 'final_images2', brand_config))
         
         successful = sum(1 for r in results if r['success'])
         print(f"\nProcessing Summary:")
@@ -222,7 +225,7 @@ if __name__ == "__main__":
 
     example_config = {
         'article_input': "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans",
-        'num_pages' : 8,
+        'num_pages' : 6,
         'color_palette_type': ColorPaletteInput.URL,
         'color_palette_input':  "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans",
         'uploaded_logo': uploaded_logo_simulation,  
@@ -234,8 +237,8 @@ if __name__ == "__main__":
 
 
     output_files,results  = main(**example_config)
-    print("Generated Files:", output_files)    
-    print("Generated Files:", results)
+    #print("Generated Files:", output_files)    
+    #print("Generated Files:", results)
     
 
     end_time = int(time.time())  

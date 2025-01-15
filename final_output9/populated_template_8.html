@@ -15,7 +15,7 @@
         body {
             width: 1080px;
             height: 1080px;
-            font-family: Helvetica;
+            font-family: Verdana;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -27,87 +27,105 @@
             height: 100%;
             position: relative;
             overflow: hidden;
+            background: #096d6d;
         }
 
         .image {
-            flex: 1;
-            display: flex;
+            width: 48%;
+            height: 100%;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 80% 100%, 0 100%);
+        }
+
+        .image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(26,41,66,0.4), transparent);
         }
 
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Ensures the image scales properly */
+            object-fit: cover;
         }
 
         .content {
-            flex: 1;
+            width: 50%;
+            padding: 60px 60px 60px 100px;
             display: flex;
             flex-direction: column;
-            padding: 20px;
-            background: #096d6d;
-            position: relative; /* To position the brand name at the bottom */
+            justify-content: center;
+            position: relative;
+            margin-left: -30px;
         }
 
         .logo {
-            height: 90px;
-            width: 90px;
-            margin-bottom: 20px;
+            position: absolute;
+            top: 20px;
+            right: 60px;
+            height: 100px;
+            width: 100px;
+            border-radius: 10px;
+            padding: 15px;
         }
 
         .logo img {
-            height: 90px;
-            width: 90px;
-        }
-
-        .arrow {
-            font-size: 24px;
-            margin-bottom: 20px;
+            height: 100%;
+            width: 100%;
         }
 
         .title-text {
             font-size: 4em;
             font-weight: bold;
-            color: #fefdfd;
-            background: #97123c;
-            padding: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-            border-radius: 5px; 
+            color: #fcfbfb;
+            margin-bottom: 40px;
+            line-height: 1.2;
+            position: relative;
+            padding-bottom: 25px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .body-text {
             font-size: 2em;
             color: #000000;
             line-height: 1.5;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
+            padding-right: 40px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .brand-name {
-            font-size: 1.5em;
-            color: #c16e15;
-            text-align: center;
-            padding: 10px;
-            border-radius: 5px;
             position: absolute;
-            bottom: 20px; /* Fixes the brand name at the bottom */
-            width: 100%; /* Makes the brand name span across the content area */
+            bottom: 40px;
+            left: 100px;
+            font-size: 1.6em;
+            color: #c16e15;
+            display: flex;
+            align-items: left;
+            gap: 15px;
         }
     </style>
 </head>
 <body>
 <div class="container">
+<div class="image">
+<img alt="News Image" src="images\placeholder.jpg"/>
+</div>
 <div class="content">
 <div class="logo">
-<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\87002259-79f1-4827-949c-d1d320d58452logo_.svg"/>
+<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
 </div>
-<div class="arrow">➜</div>
-<div class="title-text">NEUROSCIENCE INSIGHTS</div>
-<div class="body-text">In recent years, neuroscience has provided insights into self-sabotage. Professor Tobias Hauser investigates brain activity in those with OCD, revealing neurotransmitter imbalances affecting thought regulation and control。</div>
-<div class="brand-name">www.carouselgen.com</div>
-</div>
-<div class="image">
-<img alt="Image" src="images\placeholder.jpg"/>
+<div class="title-text">PLATO'S CHARIOT METAPHOR</div>
+<div class="body-text">In the Phaedrus, Plato likens the human psyche to a chariot scene—one light horse embodies our good intentions while the dark horse symbolizes our destructive impulses, illustrating our internal conflicts.</div>
+<div class="brand-name">@legalwires</div>
 </div>
 </div>
 </body>

@@ -1,6 +1,7 @@
 import os
 import json
 import random
+import time
 import base64
 from bs4 import BeautifulSoup
 import requests
@@ -130,103 +131,118 @@ class ArticleCarouselGenerator:
 
 
     def generate_carousel_content(self, article_text, template_info):
-        """
-        Generate carousel content using OpenAI API
-        
-        Args:
-            article_text (str): The article text to base content on
-            template_info (list): List of template information
-        
-        Returns:
-            dict: Parsed JSON content for carousel
-        """
-        # removing 'content'
-        sanitized_template_info = [
-            {key: value for key, value in template.items() if key != "content"}
-            for template in template_info
-        ]
+            """
+            Generate carousel content using OpenAI API with retry logic for errors
+            """
+            constraints_details = []
+            for i, template in enumerate(template_info, 1):
+                constraints_details.append(
+                    f"Page {i}:\n"
+                    f"- Title: Write a title under {int(template['title_length'])} characters\n"
+                    f"- Content: Write {int(template['content_length'])} characters or less using short, complete sentences"
+                )
     
-        prompt = f"""
-        Break down the following article into {len(sanitized_template_info)} pages.
-        Each page must adhere to the title and body text length constraints provided. And try to generate text a little less than the constraint. Length is the number of characters.
+            constraints_str = "\n".join(constraints_details)
     
-        Constraints:
-        {json.dumps(sanitized_template_info, indent=2)}
+            prompt = f"""
+            You are tasked with breaking down this article into {len(template_info)} well-developed pages.
     
-        Output Format:
-        {{
-            "pages": [
-                {{
-                    "title": "Page title (adhering to constraints) should be all in uppercase",
-                    "content": "Page body text (adhering to constraints) generate text half size of given size constraint i.e., number of characters",
-                    "template_path": "Path to template",
-                    "image": "Path to image",
-                    "logo": "Path to logo"
-                }}
-            ]
-        }}
+            CRITICAL LENGTH RULES:
+            {constraints_str}
     
-        Create engaging and meaningful content that flows naturally across pages while maintaining the article's core message and narrative structure. Each page should work both independently and as part of the sequence.
+            WRITING GUIDELINES:
+            1. Titles: Create IMPACTFUL UPPERCASE titles using EXACTLY the maximum allowed characters
+            2. Content: Write FULL-LENGTH content that uses 90-100% of the character limit
+            3. Content must be detailed and comprehensive, using complete sentences
+            4. Each page should contain:
+               - A primary message or concept
+               - Supporting details or examples
+               - Clear connection to the overall narrative
+            5. Maintain natural flow and readability
+            6. Use professional, engaging language
+            7. Each content section MUST use at least 90% of its maximum character limit
+            8. NO short, fragmentary content allowed
     
-        Article Text:
-        {article_text[:4500]}
-
-        Give the json man"""
-    
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
-                    {"role": "user", "content": prompt}
+            Output Format:
+            {{
+                "pages": [
+                    {{
+                        "title": "UPPERCASE TITLE (USING FULL CHARACTER LIMIT)",
+                        "content": "Detailed, comprehensive content that uses 90-100% of the character limit. Must contain complete thoughts and proper context. No abbreviated or truncated content allowed.",
+                        "template_path": "Path to template",
+                        "image": "Path to image",
+                        "logo": "Path to logo"
+                    }}
                 ]
-            )
-            
-            content = response.choices[0].message.content
-            print("Generated content:", content)
-           
-            if content.startswith('```json'):
-                content = content.replace('```json\n', '').replace('\n```', '')
-           
-            json_content = json.loads(content)
-        
-            if not isinstance(json_content, dict) or 'pages' not in json_content:
-                raise ValueError("Invalid JSON structure")
-            
-           
-            for i, page in enumerate(json_content['pages']):
-                if i < len(template_info):
-                    page['template_path'] = template_info[i]['path']
-                    
-            return json_content
-        except json.JSONDecodeError as e:
-            logger.error(f"JSON parsing error: {str(e)}")
-            return None
-        except Exception as e:
-            logger.error(f"Error generating carousel content: {str(e)}")
+            }}
+    
+            Article Text:
+            {article_text[:4500]}
+            Respond only with the JSON.
+            """
+    
+            retries = 3
+            for attempt in range(retries):
+                try:
+                    response = self.client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[
+                            {"role": "system", "content": "You are a content generation assistant specializing in creating engaging, well-structured carousel content."},
+                            {"role": "user", "content": prompt}
+                        ]
+                    )
+                    content = response.choices[0].message.content
+                    print("Generated content:", content)
+    
+                    if content.startswith('```json'):
+                        content = content.replace('```json\n', '').replace('\n```', '')
+    
+                    json_content = json.loads(content)
+    
+                    if not isinstance(json_content, dict) or 'pages' not in json_content:
+                        raise ValueError("Invalid JSON structure")
+    
+                    for i, page in enumerate(json_content['pages']):
+                        if i < len(template_info):
+                            page['template_path'] = template_info[i]['path']
+    
+                    return json_content
+    
+                except (json.JSONDecodeError, ValueError) as e:
+                    logger.error(f"Attempt {attempt + 1}: JSON parsing error: {str(e)}")
+                except Exception as e:
+                    logger.error(f"Attempt {attempt + 1}: Error generating carousel content: {str(e)}")
+    
+                time.sleep(2)
+    
+            logger.error("Failed to generate valid carousel content after multiple retries")
             return None       
+        
 
     def generate_image_prompts(self, article_text, carousel_content):
         """
-        Generate image prompts for each page based on the article and content
+        Generate image prompts for each page based on the article and content with retry mechanism
         
         Args:
             article_text (str): The original article text
             carousel_content (dict): The generated carousel content
             
         Returns:
-            dict: Updated carousel content with image prompts
+            dict: Updated carousel content with image prompts or None if all retries fail
         """
+        max_retries = 3
+        retry_count = 0
+        
         prompt = f"""
         Based on the following article and generated carousel content, create appropriate image prompts for each page.
         Each prompt should be descriptive and relate to the page's content and don't use text in the image.
-
+    
         Article Text:
         {article_text}
-
+    
         Carousel Content:
         {json.dumps(carousel_content, indent=2)}
-
+    
         Generate an image prompt very detailed  for each page in the following format:
         {{
             "pages": [
@@ -237,35 +253,114 @@ class ArticleCarouselGenerator:
             ]
         }}
         """
+    
+        while retry_count < max_retries:
+            try:
+                response = self.client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are an expert at creating detailed image generation prompts."},
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                print(f"Attempt {retry_count + 1} response: {response}")
+                
+                response_content = response.choices[0].message.content
+                
+                if response_content.startswith('```json'):
+                    response_content = response_content.replace('```json\n', '').replace('\n```', '')
+                
+                try:
+                    image_prompts = json.loads(response_content)
+                    print(f"Successfully parsed image prompts on attempt {retry_count + 1}: {image_prompts}")
+                    
+                    # Validate the expected structure
+                    if 'pages' in image_prompts and isinstance(image_prompts['pages'], list):
+                        # Update carousel content with image prompts
+                        for page_prompt in image_prompts['pages']:
+                            page_idx = page_prompt['page_number'] - 1
+                            carousel_content['pages'][page_idx]['image_prompt'] = page_prompt['image_prompt']
+                        
+                        return carousel_content
+                    else:
+                        print(f"Invalid response structure on attempt {retry_count + 1}")
+                        retry_count += 1
+                        
+                except json.JSONDecodeError as json_error:
+                    print(f"JSON decode error on attempt {retry_count + 1}: {json_error}")
+                    retry_count += 1
+                    
+            except Exception as e:
+                print(f"Error on attempt {retry_count + 1}: {e}")
+                retry_count += 1
+                
+            # Add a small delay between retries
+            if retry_count < max_retries:
+                time.sleep(1)
+        
+        logger.error(f"Failed to generate image prompts after {max_retries} attempts")
+        return None
 
-        try:
-            response = self.client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are an expert at creating detailed image generation prompts."},
-                    {"role": "user", "content": prompt}
-                ]
-            )
-            print( f"this is response {response}")
-            response_content = response.choices[0].message.content
-            
-            if response_content.startswith('```json'):
-                response_content = response_content.replace('```json\n', '').replace('\n```', '')
-            
-            image_prompts = json.loads(response_content)
-
-            print(f"this is image prompt{image_prompts}")
-            
-            # update carousel content with image prompts
-            for page_prompt in image_prompts['pages']:
-                page_idx = page_prompt['page_number'] - 1
-                carousel_content['pages'][page_idx]['image_prompt'] = page_prompt['image_prompt']
-            
-            return carousel_content
-            
-        except Exception as e:
-            logger.error(f"Error generating image prompts: {e}")
-            return None
+    #def generate_image_prompts(self, article_text, carousel_content):
+    #    """
+    #    Generate image prompts for each page based on the article and content
+    #    
+    #    Args:
+    #        article_text (str): The original article text
+    #        carousel_content (dict): The generated carousel content
+    #        
+    #    Returns:
+    #        dict: Updated carousel content with image prompts
+    #    """
+    #    prompt = f"""
+    #    Based on the following article and generated carousel content, create appropriate image prompts for each page.
+    #    Each prompt should be descriptive and relate to the page's content and don't use text in the image.
+#
+    #    Article Text:
+    #    {article_text}
+#
+    #    Carousel Content:
+    #    {json.dumps(carousel_content, indent=2)}
+#
+    #    Generate an image prompt very detailed  for each page in the following format:
+    #    {{
+    #        "pages": [
+    #            {{
+    #                "page_number": 1,
+    #                "image_prompt": "a very Detailed description for image generation."
+    #            }}
+    #        ]
+    #    }}
+    #    """
+#
+    #    try:
+    #        response = self.client.chat.completions.create(
+    #            model="gpt-4o-mini",
+    #            messages=[
+    #                {"role": "system", "content": "You are an expert at creating detailed image generation prompts."},
+    #                {"role": "user", "content": prompt}
+    #            ]
+    #        )
+    #        print( f"this is response {response}")
+    #        response_content = response.choices[0].message.content
+    #        
+    #        if response_content.startswith('```json'):
+    #            response_content = response_content.replace('```json\n', '').replace('\n```', '')
+    #        
+    #        image_prompts = json.loads(response_content)
+#
+    #        print(f"this is image prompt{image_prompts}")
+    #        
+    #        # update carousel content with image prompts
+    #        for page_prompt in image_prompts['pages']:
+    #            page_idx = page_prompt['page_number'] - 1
+    #            carousel_content['pages'][page_idx]['image_prompt'] = page_prompt['image_prompt']
+    #        
+    #        return carousel_content
+    #        
+    #    except Exception as e:
+    #        logger.error(f"Error generating image prompts: {e}")
+    #        return None
 
     def update_content_with_dimensions(self, carousel_content, template_specs):
         """
