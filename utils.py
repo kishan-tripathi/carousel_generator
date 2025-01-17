@@ -55,7 +55,7 @@ class LlamaAPIClient:
     def __init__(
         self,
         model_path: str = "hugging-quants/Meta-Llama-3.1-8B-Instruct-AWQ-INT4",
-        api_url: str = os.getenv('BASE_URL'),  # Replace with your E2E endpoint
+        api_url: str = os.getenv('BASE_URL'), 
         auth_token: str = os.getenv('AUTH_TOKEN'),
         max_retries: int = 3,
         base_delay: float = 1.0
@@ -162,8 +162,6 @@ def cleanup_files(images_dir, logos_dir, user_id):
             if os.path.isfile(file_path):
                 os.remove(file_path)
                 print(f"Deleted: {file_path}")
-
-        # Delete SVG files in the logos directory that start with the user_id
         for file_name in os.listdir(logos_dir):
             if file_name.startswith(user_id) and file_name.endswith('.svg'):
                 file_path = os.path.join(logos_dir, file_name)

@@ -13,7 +13,8 @@ import asyncio
 import zipfile
 from io import BytesIO
 from main import main as main_module
-from utils import ColorPaletteInput, cleanup_files, UserIDGenerator
+from utils import  cleanup_files, UserIDGenerator
+from extract_colors import ColorPaletteInput
 
 app = FastAPI()
 uid_generator = UserIDGenerator()

@@ -39,21 +39,17 @@ def handle_color_palette(input_type: ColorPaletteInput, color_input=None):
             print("Invalid manual color list provided")
             return None
 
-def extract_colors_from_website(url):
-    # Configure headless browser
+def extract_colors_from_website(url): 
     chrome_options = Options()
-    chrome_options.add_argument("--headless")  # Proper headless mode
-    chrome_options.add_argument("--disable-gpu")  # Disable GPU for compatibility
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-gpu")  
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
 
-    # Initialize the Selenium WebDriver
     driver = webdriver.Chrome(options=chrome_options)
 
     try:
         driver.get(url)
-
-        # Extract tag names and inline colors
         tags = re.findall(r'<([a-zA-Z]+)', driver.page_source)
         unique_tags = list(set(tags))
         color_data = []
@@ -94,11 +90,175 @@ def find_dominant_colors(color_list, n_colors=5):
         return []
 
 def extract_colors_from_url(url):
-    # Extract colors from the website
     extracted_data = extract_colors_from_website(url)
 
-    # Find top dominant colors
     dominant_colors = find_dominant_colors(extracted_data, n_colors=5)
 
-    # Return the list of dominant colors
     return dominant_colors
+
+#colors = extract_colors_from_url("https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans")
+#print(colors)
+
+#from selenium import webdriver
+#from selenium.webdriver.chrome.options import Options
+#from selenium.webdriver.common.by import By
+#from selenium.webdriver.support.ui import WebDriverWait
+#from selenium.webdriver.support import expected_conditions as EC
+#import numpy as np
+#from sklearn.cluster import KMeans
+#import re
+#import logging
+#import time
+#from concurrent.futures import ThreadPoolExecutor
+#from functools import lru_cache
+#
+#class OptimizedColorExtractor:
+#    def __init__(self, max_colors=5, timeout=10):  # Reduced default timeout
+#        self.max_colors = max_colors
+#        self.timeout = timeout
+#        self.chrome_options = self._setup_chrome_options()
+#        logging.basicConfig(level=logging.WARNING)  # Changed to WARNING level
+#        self.logger = logging.getLogger(__name__)
+#        
+#    @staticmethod
+#    def _setup_chrome_options():
+#        options = Options()
+#        options.add_argument("--headless")
+#        options.add_argument("--disable-gpu")
+#        options.add_argument("--no-sandbox")
+#        options.add_argument("--disable-dev-shm-usage")
+#        # Additional performance optimizations
+#        options.add_argument("--disable-extensions")
+#        options.add_argument("--disable-logging")
+#        options.add_argument("--disable-3d-apis")
+#        options.add_argument("--disable-images")  # Disable image loading
+#        options.page_load_strategy = 'eager'  # Changed to eager loading
+#        return options
+#
+#    @lru_cache(maxsize=1024)
+#    def _convert_to_rgb(self, color_string):
+#        """Convert color string to RGB tuple with caching"""
+#        if not color_string or color_string == 'transparent' or color_string == 'rgba(0, 0, 0, 0)':
+#            return None
+#            
+#        try:
+#            match = re.search(r'rgba?\((\d+),\s*(\d+),\s*(\d+)', color_string)
+#            if match:
+#                r, g, b = map(int, match.groups())
+#                if (r, g, b) != (0, 0, 0) and (r, g, b) != (255, 255, 255):
+#                    return (r, g, b)
+#        except Exception:
+#            pass
+#        return None
+#
+#    def _process_element(self, element):
+#        """Process a single element's colors"""
+#        colors = set()
+#        try:
+#            bg_color = element.value_of_css_property('background-color')
+#            color = element.value_of_css_property('color')
+#            
+#            if bg_color:
+#                colors.add(bg_color)
+#            if color:
+#                colors.add(color)
+#        except:
+#            pass
+#        return colors
+#
+#    def _extract_element_colors(self, driver):
+#        """Extract colors from elements using parallel processing"""
+#        colors = set()
+#        try:
+#            # Optimized selector list
+#            selectors = [
+#                "div[style]", "span[style]", "a[style]", 
+#                "*[class*='bg-']", "*[class*='color-']",
+#                "*[style*='background']", "*[style*='color']"
+#            ]
+#            
+#            # Combine all selectors for a single query
+#            combined_selector = ', '.join(selectors)
+#            elements = driver.find_elements(By.CSS_SELECTOR, combined_selector)
+#            
+#            # Process elements in parallel
+#            with ThreadPoolExecutor(max_workers=4) as executor:
+#                element_colors = executor.map(self._process_element, elements)
+#                
+#            for color_set in element_colors:
+#                colors.update(color_set)
+#                
+#        except Exception as e:
+#            self.logger.error(f"Error extracting colors: {e}")
+#            
+#        return colors
+#
+#    def _cluster_colors(self, rgb_colors):
+#        """Optimized color clustering"""
+#        try:
+#            if not rgb_colors:
+#                return []
+#            
+#            rgb_array = np.array(rgb_colors)
+#            n_colors = min(self.max_colors, len(rgb_colors))
+#            
+#            # Use mini-batch K-means for faster clustering
+#            kmeans = KMeans(
+#                n_clusters=n_colors,
+#                random_state=42,
+#                n_init=5,  # Reduced number of initializations
+#                max_iter=100,  # Reduced maximum iterations
+#                algorithm='elkan'  # Faster algorithm for lower dimensional data
+#            )
+#            kmeans.fit(rgb_array)
+#            
+#            return [f"#{int(r):02x}{int(g):02x}{int(b):02x}" 
+#                   for r, g, b in kmeans.cluster_centers_]
+#            
+#        except Exception as e:
+#            self.logger.error(f"Clustering error: {e}")
+#            return []
+#
+#    def extract_colors(self, url):
+#        """Main extraction method with timeout handling"""
+#        driver = None
+#        try:
+#            driver = webdriver.Chrome(options=self.chrome_options)
+#            driver.set_page_load_timeout(self.timeout)
+#            
+#            self.logger.info(f"Loading URL: {url}")
+#            driver.get(url)
+#            
+#            # Reduced wait time with specific condition
+#            WebDriverWait(driver, self.timeout).until(
+#                EC.presence_of_element_located((By.TAG_NAME, "body"))
+#            )
+#            
+#            raw_colors = self._extract_element_colors(driver)
+#            rgb_colors = [rgb for color in raw_colors 
+#                         if (rgb := self._convert_to_rgb(color))]
+#            
+#            if not rgb_colors:
+#                return []
+#                
+#            return self._cluster_colors(rgb_colors)
+#            
+#        except Exception as e:
+#            self.logger.error(f"Error in color extraction: {e}")
+#            return []
+#            
+#        finally:
+#            if driver:
+#                driver.quit()
+#
+## Usage example
+#if __name__ == "__main__":
+#    url = "https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans"
+#    extractor = OptimizedColorExtractor(max_colors=10)
+#    
+#    start_time = time.time()
+#    colors = extractor.extract_colors(url)
+#    elapsed = time.time() - start_time
+#    
+#    print(f"Time taken: {elapsed:.2f} seconds")
+#    print("Dominant colors:", colors if colors else "No colors extracted")

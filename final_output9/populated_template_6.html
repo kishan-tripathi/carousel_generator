@@ -15,27 +15,35 @@
         body {
             width: 1080px;
             height: 1080px;
-            font-family: Verdana;
-            position: relative;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .container {
+            display: flex;
+            flex-direction: column;
             width: 100%;
             height: 100%;
             position: relative;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
         }
 
         .image {
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
+            height: 60%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .image::after {
+            content: '';
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
+            right: 0;
+            height: 150px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff);
         }
 
         .image img {
@@ -45,102 +53,83 @@
         }
 
         .content {
-            width: 90%;
-            height: auto;
-            background: #f9f8fa;
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 30px;
+            height: 40%;
+            background: white;
+            padding: 30px 60px;
+            position: relative;
             display: flex;
             flex-direction: column;
-            justify-content: flex-start;
-            border-radius: 15px;
-            
+            align-items: flex-start;
         }
 
         .logo {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: -45px;
+            left: 60px;
             height: 90px;
             width: 90px;
-            padding: 5px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
 
         .logo img {
             height: 100%;
             width: 100%;
-            object-fit: contain;
         }
 
         .arrow {
-            position: absolute;
-            top: 50%;
-            right: -30px;
-            font-size: 24px;
-            background: #1a2942;
-            color: white;
-            width: 60px;
-            height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
+            font-size: 28px;
+            color: #1a2942;
+            margin: 20px 0;
+            transform: rotate(-45deg);
         }
 
         .title-text {
-            font-size: 2.8em;
+            font-size: 3.8em;
             font-weight: bold;
-            color: #ffffff;
-            background: #97123c;
+            color: #1a2942;
             margin-bottom: 20px;
-            text-align: left;
-            padding: 15px 25px;
-            border-radius: 10px;
-            transform: translateY(-50px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            line-height: 1.2;
+            max-width: 90%;
+            background: linear-gradient(120deg, #1a2942, #2a3952);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .body-text {
-            font-size: 22px;
-            color: #000000;
-            line-height: 1.6;
-            margin-bottom: 40px;
-            padding: 0 10px;
+            font-size: 1.8em;
+            color: #555;
+            line-height: 1.5;
+            max-width: 80%;
         }
 
         .brand-name {
-            font-size: 20px;
-            color: #c16e15;
-            font-weight: bold;
-            text-align: right;
             position: absolute;
-            bottom: 20px;
-            right: 30px;
-            width: auto;
+            bottom: 30px;
+            right: 60px;
+            font-size: 1.5em;
+            color: #1a2942;
+            font-weight: 500;
             padding: 10px 20px;
-            border-radius: 5px;
-            background: rgba(255,255,255,0.8);
+            border: 2px solid #1a2942;
+            border-radius: 30px;
         }
     </style>
 </head>
 <body>
 <div class="container">
 <div class="image">
-<img alt="Image" src="images\placeholder.jpg"/>
-</div>
-<div class="logo">
-<img alt="logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
+<img alt="News Image" src="images\placeholder.jpg"/>
 </div>
 <div class="content">
-<div class="title-text">MOVING TOWARD SELF-IMPROVEMENT STRATEGIES</div>
-<div class="body-text">Embracing self-awareness and resilience can combat self-sabotage. Set clear goals and reflect on progress toward a healthier mindset.</div>
-<div class="arrow">➜</div>
+<div class="logo">
+<img alt="Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\Nonelogo_.svg"/>
+</div>
+<div class="arrow">↘</div>
+<div class="title-text">NEUROSCIENCE INSIGHTS</div>
+<div class="body-text">Neuroscientific research helps explain self-sabotage. Neurotransmitter imbalances can lead to disruptive thoughts.</div>
 <div class="brand-name">@legalwires</div>
 </div>
 </div>
