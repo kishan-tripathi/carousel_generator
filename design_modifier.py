@@ -269,5 +269,6 @@ async def process_templates(
     for idx, content in sorted(results, key=lambda x: x[0]):
         if content:
             modified_files.append(content)
-    
     return modified_files
+
+

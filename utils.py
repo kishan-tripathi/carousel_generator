@@ -172,7 +172,7 @@ def cleanup_files(images_dir, logos_dir, user_id):
         print(f"Error during cleanup: {e}")    
     
 
-def handle_logo_upload(uploaded_logo,user_id):
+def handle_logo_upload(uploaded_logo,user_id,time_stamp):
     """
     Handle logo file upload and save to logos directory
     """
@@ -183,7 +183,7 @@ def handle_logo_upload(uploaded_logo,user_id):
     logos_dir.mkdir(exist_ok=True)
     
     #timestamp = int(time.time())
-    logo_filename = f"{user_id}logo_.svg"
+    logo_filename = f"{user_id}{time_stamp}logo_.svg"
     logo_path = os.path.abspath(logos_dir / logo_filename)
     
     try:

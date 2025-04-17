@@ -79,7 +79,9 @@ class TemplateSelector:
                     "title_length": self.calculate_div_length(file.get("content", ""), "title-text"),
                     "content_length": self.calculate_div_length(file.get("content", ""), "body-text"),
                     "content": file.get("content", ""),
-                    "path": file.get("file_name", "default_filename.html")
+                    "path": file.get("file_name", "default_filename.html"),
+                    "image_height" : file.get("image_height"),
+                    "image_width": file.get("image_width")
                 }
                 for file in selected_files if file.get("content")
             ]
@@ -169,7 +171,7 @@ class TemplateSelector:
             populated_templates = [r for r in results if r is not None]
 
             if not populated_templates:
-                logger.warning("No templates were successfully populated.")
+                logger.error("No templates were successfully populated.")
                 return None
 
             return populated_templates

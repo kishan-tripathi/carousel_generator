@@ -23,8 +23,9 @@ def main(
     uploaded_logo=None, 
     include_images=True, 
     font_style=None,
-    user_id=None,
+    user_id="123",
     brand_name=None,
+    time_stamp = "123"
 ):
     """
     Main function to process article content and generate designed templates
@@ -51,7 +52,7 @@ def main(
 
 
     
-    logo_path = handle_logo_upload(uploaded_logo,user_id)
+    logo_path = handle_logo_upload(uploaded_logo,user_id,time_stamp)
 
     processed_colors = handle_color_palette(color_palette_type, color_palette_input)
     logger.info("Logo and color palette processed")
@@ -71,7 +72,9 @@ def main(
         logger.error("Failed to get article content")
         return None
     
-    output_dir = 'final_output9'
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(base_dir, "final_output9")
+    os.makedirs(output_dir, exist_ok=True)    
 
     brand_config = {
         'color_palette': processed_colors,
@@ -79,22 +82,32 @@ def main(
         'font_style': font_style,
         'include_images': include_images,
         'user_id':user_id,
-        'brand_name':brand_name
+        'brand_name':brand_name,
+        'time_stamp':time_stamp
     }
     print(brand_config)
         
 
     template_info = processor.select_templates(num_pages,brand_config)
-    if not template_info:
+    if template_info:
+        logger.info("Templates selected sucessfully")
+    else:    
         logger.info("Template selection failed")
         return None
 
     carousel_content = generator.process_article(article_text, template_info, brand_config, include_images=include_images)
-    if not carousel_content:
+    if carousel_content:
         logger.info("Failed to process articcle content")
-
+    else:
+        logger.info("article content processed sucessfully")    
         return None
-    #print(carousel_content)
+    
+    print(carousel_content)
+    filename = 'content.json'
+    with open(filename, 'w', encoding='utf-8') as f:
+            
+        json.dump(carousel_content, f, indent=4)  
+    
 
     filename = 'template_info.txt'
     with open(filename, 'w', encoding='utf-8') as f:
@@ -110,7 +123,7 @@ def main(
     brand_config=brand_config
     
 ))
-    logging.info("content replaced done")
+    logging.info("content replaced")
     selected_layouts = [
         {"collection": "layouts_lit", "layout": "layout1"},
         {"collection": "layouts_lit", "layout": "layout5"},
@@ -210,9 +223,6 @@ def main(
         
         return modified_files, results   
 
-
-
-
 if __name__ == "__main__":
     
 
@@ -233,12 +243,9 @@ if __name__ == "__main__":
         'font_style': "Verdana",
         'brand_name':"@legalwires"
     }
-
-
-
     output_files,results  = main(**example_config)
-    #print("Generated Files:", output_files)    
-    #print("Generated Files:", results)
+    print("Generated Files:", output_files)    
+    print("Generated Files:", results)
     
 
     end_time = int(time.time())  

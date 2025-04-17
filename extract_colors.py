@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import re
+import time
 from sklearn.cluster import KMeans
 import webcolors
 from enum import Enum
@@ -96,8 +97,15 @@ def extract_colors_from_url(url):
 
     return dominant_colors
 
+
+#start_time = time.time()
 #colors = extract_colors_from_url("https://aeon.co/essays/why-do-i-let-myself-sabotage-my-own-best-laid-plans")
 #print(colors)
+#end_time = time.time()
+#tota_time  = end_time-start_time
+#print(time)
+
+
 
 #from selenium import webdriver
 #from selenium.webdriver.chrome.options import Options

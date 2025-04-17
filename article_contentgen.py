@@ -47,17 +47,16 @@ class FluxImageGeneratorAPI:
             response = requests.post(self.api_url, json=payload)
             response.raise_for_status()
             
-            # Decode the image from the base64 response
             image_base64 = response.json().get("response")
             if image_base64:
                 with open(output_path, "wb") as f:
                     f.write(base64.b64decode(image_base64))
                 return output_path
             else:
-                print("Error: No image data in API response.")
+                logger.error("Error: No image data in API response.")
                 return None
         except requests.exceptions.RequestException as e:
-            print(f"Error calling Flux API: {e}")
+            logger.error(f"Error calling Flux API: {e}")
             return None
 
 
@@ -80,11 +79,8 @@ class ArticleCarouselGenerator:
             str: The extracted article content, or None if extraction fails.
         """
         try:
-            # Fetch the webpage
             response = requests.get(url, timeout=10)
             response.raise_for_status()
-            
-            # Parse HTML content
             soup = BeautifulSoup(response.text, 'html.parser')
             
             
@@ -106,9 +102,9 @@ class ArticleCarouselGenerator:
             raise ValueError("Article content could not be extracted from the provided URL.")
         
         except requests.RequestException as req_err:
-            print(f"Network-related error: {req_err}")
+            logger.error(f"Network-related error: {req_err}")
         except Exception as e:
-            print(f"Error fetching article: {e}")
+            logger.error(f"Error fetching article: {e}")
         
         return None
     
@@ -243,7 +239,7 @@ class ArticleCarouselGenerator:
         Carousel Content:
         {json.dumps(carousel_content, indent=2)}
     
-        Generate an image prompt very detailed  for each page in the following format:
+        Generate an image prompt very detailed  for each page in the following format And no comments in the JSON:
         {{
             "pages": [
                 {{
@@ -263,7 +259,7 @@ class ArticleCarouselGenerator:
                         {"role": "user", "content": prompt}
                     ]
                 )
-                print(f"Attempt {retry_count + 1} response: {response}")
+                logger.info(f"Attempt {retry_count + 1} response: {response}")
                 
                 response_content = response.choices[0].message.content
                 
@@ -272,29 +268,24 @@ class ArticleCarouselGenerator:
                 
                 try:
                     image_prompts = json.loads(response_content)
-                    print(f"Successfully parsed image prompts on attempt {retry_count + 1}: {image_prompts}")
-                    
-                    # Validate the expected structure
+                    logger.info(f"Successfully parsed image prompts on attempt {retry_count + 1}: {image_prompts}")
                     if 'pages' in image_prompts and isinstance(image_prompts['pages'], list):
-                        # Update carousel content with image prompts
                         for page_prompt in image_prompts['pages']:
                             page_idx = page_prompt['page_number'] - 1
                             carousel_content['pages'][page_idx]['image_prompt'] = page_prompt['image_prompt']
                         
                         return carousel_content
                     else:
-                        print(f"Invalid response structure on attempt {retry_count + 1}")
+                        logger.error(f"Invalid response structure on attempt {retry_count + 1}")
                         retry_count += 1
                         
                 except json.JSONDecodeError as json_error:
-                    print(f"JSON decode error on attempt {retry_count + 1}: {json_error}")
+                    logger.error(f"JSON decode error on attempt {retry_count + 1}: {json_error}")
                     retry_count += 1
                     
             except Exception as e:
-                print(f"Error on attempt {retry_count + 1}: {e}")
+                logger.error(f"Error on attempt {retry_count + 1}: {e}")
                 retry_count += 1
-                
-            # Add a small delay between retries
             if retry_count < max_retries:
                 time.sleep(1)
         
@@ -362,99 +353,197 @@ class ArticleCarouselGenerator:
     #        logger.error(f"Error generating image prompts: {e}")
     #        return None
 
-    def update_content_with_dimensions(self, carousel_content, template_specs):
+    #def update_content_with_dimensions(self, carousel_content, template_specs):
+    #    """
+    #    Update carousel content with image dimensions from template specifications
+    #    """
+    #    for page in carousel_content['pages']:
+    #        template_path = page['template_path']
+    #        template_name = os.path.basename(template_path)
+    #        
+    #        if template_name in template_specs:
+    #            specs = template_specs[template_name]
+    #            page['image_height'] = specs['image_height']
+    #            page['image_width'] = specs['image_width']
+    #    
+    #    return carousel_content
+    
+    def update_content_with_dimensions(self, carousel_content, template_info):
         """
         Update carousel content with image dimensions from template specifications
         """
+        template_map = {item['filename']: item for item in template_info}
         for page in carousel_content['pages']:
-            template_path = page['template_path']
+            template_path = page.get('template_path', '')
             template_name = os.path.basename(template_path)
-            
-            if template_name in template_specs:
-                specs = template_specs[template_name]
-                page['image_height'] = specs['image_height']
-                page['image_width'] = specs['image_width']
+            if template_name in template_map:
+                specs = template_map[template_name]
+                page['image_height'] = specs.get('image_height')
+                page['image_width'] = specs.get('image_width')
+            else:
+                page['image_height'] = None
+                page['image_width'] = None
         
         return carousel_content
+    
 
-    def process_article(self, article_text, template_info, brand_config,include_images):
+    def process_article(self, article_text, template_info, brand_config, include_images):
         """
         Process an article and generate carousel content.
-        
+    
         If include_images is False, skip image generation and related tasks.
         Use the logo path from brand_config.
-        
+    
         Parameters:
         - article_text (str): Text of the article to process
         - template_info (dict): Template-specific information
         - include_images (bool): Flag to include image generation
         - brand_config (dict): Dictionary containing brand configurations
         """
-
+    
         user_id = brand_config['user_id']
-        # Generate initial carousel content
+        timestamp = brand_config['time_stamp']
+        generation_folder = os.path.join("images", user_id, f"generation_{timestamp}")
+    
+        os.makedirs(generation_folder, exist_ok=True)
+    
         carousel_content = self.generate_carousel_content(article_text, template_info)
         if not carousel_content:
             print("Failed to generate carousel content")
             return None
     
         if include_images:
-            
-           
             carousel_content = self.generate_image_prompts(article_text, carousel_content)
-            
+    
             if not carousel_content:
                 logger.error("Failed to generate image prompts")
                 return None
-            logger.info("Image prompts generated sucessfully!!")
+            logger.info("Image prompts generated successfully!")
     
-           
             carousel_content = self.update_content_with_dimensions(
                 carousel_content, 
-                HTMLTemplateProcessor().template_specs
+                template_info
             )
-            logger.info("carousel content updated sucessfully with dims!!")
-            
+            logger.info("Carousel content updated successfully with dimensions!")
     
-           
             logger.info("Started Image generation")
             for page in carousel_content['pages']:
-               
                 os.makedirs('images', exist_ok=True)
+                
                 image_path = self.flux_generator.generate_image(
                     prompt=page['image_prompt'],
                     height=page['image_height'],
                     width=page['image_width'],
-                    #output_path=os.path.join('images', f"page_{carousel_content['pages'].index(page) + 1}.jpg")
-                    output_path = os.path.abspath(
-                    os.path.join('images', f"{user_id}_page_{carousel_content['pages'].index(page) + 1}.jpg")
+                    output_path=os.path.abspath(
+                        os.path.join(generation_folder, f"{user_id}_page_{carousel_content['pages'].index(page) + 1}.jpg")
                     )
                 )
                 print(image_path)
-                
+    
                 if image_path:
                     page['image'] = image_path
                 else:
                     logger.error(f"Warning: Failed to generate image for page {carousel_content['pages'].index(page) + 1}")
                     page['image'] = os.path.join('images', 'placeholder.jpg')
-
-            logger.info("Images generated sucessfully")        
     
-        # Handle logo from brand_config
+            logger.info("Images generated successfully")
         logo_path = brand_config.get('logo', None)
         for page in carousel_content['pages']:
             if logo_path:
                 page['logo'] = logo_path
             else:
                 logger.error("Warning: No logo path provided in brand_config.")
-                page['logo'] = None  # Or set a default logo path
-    
-        # Save the final content
+                page['logo'] = None  
         try:
-            with open("content.json", "w", encoding="utf-8") as json_file:
+            content_file_path = os.path.join(generation_folder, "content.json")
+            with open(content_file_path, "w", encoding="utf-8") as json_file:
                 json.dump(carousel_content, json_file, indent=4, ensure_ascii=False)
+            logger.info(f"Content saved to {content_file_path}")
             return carousel_content
         except Exception as e:
             logger.error(f"Error saving JSON file: {e}")
-            return None
-
+            return None    
+    
+      
+    #def process_article(self, article_text, template_info, brand_config,include_images):
+    #    """
+    #    Process an article and generate carousel content.
+    #    
+    #    If include_images is False, skip image generation and related tasks.
+    #    Use the logo path from brand_config.
+    #    
+    #    Parameters:
+    #    - article_text (str): Text of the article to process
+    #    - template_info (dict): Template-specific information
+    #    - include_images (bool): Flag to include image generation
+    #    - brand_config (dict): Dictionary containing brand configurations
+    #    """
+#
+    #    user_id = brand_config['user_id']
+    #    # Generate initial carousel content
+    #    carousel_content = self.generate_carousel_content(article_text, template_info)
+    #    if not carousel_content:
+    #        print("Failed to generate carousel content")
+    #        return None
+    #
+    #    if include_images:
+    #        
+    #       
+    #        carousel_content = self.generate_image_prompts(article_text, carousel_content)
+    #        
+    #        if not carousel_content:
+    #            logger.error("Failed to generate image prompts")
+    #            return None
+    #        logger.info("Image prompts generated sucessfully!!")
+    #
+    #       
+    #        carousel_content = self.update_content_with_dimensions(
+    #            carousel_content, 
+    #            template_info
+    #        )
+    #        logger.info("carousel content updated sucessfully with dims!!")
+    #        
+    #
+    #       
+    #        logger.info("Started Image generation")
+    #        for page in carousel_content['pages']:
+    #           
+    #            os.makedirs('images', exist_ok=True)
+    #            image_path = self.flux_generator.generate_image(
+    #                prompt=page['image_prompt'],
+    #                height=page['image_height'],
+    #                width=page['image_width'],
+    #                #output_path=os.path.join('images', f"page_{carousel_content['pages'].index(page) + 1}.jpg")
+    #                output_path = os.path.abspath(
+    #                os.path.join('images', f"{user_id}_page_{carousel_content['pages'].index(page) + 1}.jpg")
+    #                )
+    #            )
+    #            print(image_path)
+    #            
+    #            if image_path:
+    #                page['image'] = image_path
+    #            else:
+    #                logger.error(f"Warning: Failed to generate image for page {carousel_content['pages'].index(page) + 1}")
+    #                page['image'] = os.path.join('images', 'placeholder.jpg')
+#
+    #        logger.info("Images generated sucessfully")        
+    #
+    #    # Handle logo from brand_config
+    #    logo_path = brand_config.get('logo', None)
+    #    for page in carousel_content['pages']:
+    #        if logo_path:
+    #            page['logo'] = logo_path
+    #        else:
+    #            logger.error("Warning: No logo path provided in brand_config.")
+    #            page['logo'] = None  # Or set a default logo path
+    #
+    #    # Save the final content
+    #    try:
+    #        with open("content.json", "w", encoding="utf-8") as json_file:
+    #            json.dump(carousel_content, json_file, indent=4, ensure_ascii=False)
+    #        return carousel_content
+    #    except Exception as e:
+    #        logger.error(f"Error saving JSON file: {e}")
+    #        return None
+#
+#

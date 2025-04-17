@@ -77,9 +77,69 @@ class ImageProcessor:
             
             return result
     
+    #def _selenium_process(self, temp_html_path: str, class_name: str,
+    #                     output_folder: str, index: int,
+    #                     brand_config: Dict) -> Dict:
+    #    """
+    #    Handle Selenium operations in a separate thread.
+    #    """
+    #    result = {
+    #        'index': index,
+    #        'success': False,
+    #        'files': [],
+    #        'error': None
+    #    }
+    #    
+    #    # Configure Chrome options
+    #    chrome_options = Options()
+    #    chrome_options.add_argument('--headless')
+    #    chrome_options.add_argument('--start-maximized')
+    #    chrome_options.add_argument('--disable-gpu')
+    #    chrome_options.add_argument('--no-sandbox')
+    #    
+    #    driver = webdriver.Chrome(options=chrome_options)
+    #    
+    #    try:
+    #        # Load the HTML file
+    #        file_url = 'file://' + os.path.abspath(temp_html_path)
+    #        driver.get(file_url)
+    #        
+    #        # Wait for elements
+    #        elements = WebDriverWait(driver, 10).until(
+    #            EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
+    #        )
+    #        
+    #        # Process each element
+    #        for idx, element in enumerate(elements):
+    #            driver.execute_script("arguments[0].scrollIntoView(true);", element)
+    #            driver.implicitly_wait(1)
+    #            
+    #            screenshot = element.screenshot_as_base64
+    #            image_data = base64.b64decode(screenshot)
+    #            image = Image.open(io.BytesIO(image_data))
+    #            
+    #            timestamp = int(time.time() * 1000)
+    #            output_path = os.path.join(
+    #                output_folder,
+    #                f"{brand_config['user_id']}_{index}_{idx}_{timestamp}.png"
+    #            )
+    #            
+    #            image.save(output_path, 'PNG')
+    #            result['files'].append(output_path)
+    #        
+    #        result['success'] = True
+    #        
+    #    except Exception as e:
+    #        result['error'] = str(e)
+    #        
+    #    finally:
+    #        driver.quit()
+    #    
+    #    return result
+
     def _selenium_process(self, temp_html_path: str, class_name: str,
-                         output_folder: str, index: int,
-                         brand_config: Dict) -> Dict:
+                          output_folder: str, index: int,
+                          brand_config: Dict) -> Dict:
         """
         Handle Selenium operations in a separate thread.
         """
@@ -89,53 +149,57 @@ class ImageProcessor:
             'files': [],
             'error': None
         }
-        
+    
         # Configure Chrome options
         chrome_options = Options()
         chrome_options.add_argument('--headless')
         chrome_options.add_argument('--start-maximized')
         chrome_options.add_argument('--disable-gpu')
         chrome_options.add_argument('--no-sandbox')
-        
+    
         driver = webdriver.Chrome(options=chrome_options)
-        
+    
         try:
             # Load the HTML file
             file_url = 'file://' + os.path.abspath(temp_html_path)
             driver.get(file_url)
-            
+    
             # Wait for elements
             elements = WebDriverWait(driver, 10).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, class_name))
             )
-            
+    
+            # Get user_id and timestamp
+            user_id = brand_config['user_id']
+            timestamp = brand_config['time_stamp']
+    
+            # Create subfolder structure for the user and timestamp
+            user_dir = os.path.join(output_folder, user_id, f"generation_{timestamp}")
+            os.makedirs(user_dir, exist_ok=True)
+    
             # Process each element
             for idx, element in enumerate(elements):
                 driver.execute_script("arguments[0].scrollIntoView(true);", element)
                 driver.implicitly_wait(1)
-                
+    
                 screenshot = element.screenshot_as_base64
                 image_data = base64.b64decode(screenshot)
                 image = Image.open(io.BytesIO(image_data))
-                
-                timestamp = int(time.time() * 1000)
-                output_path = os.path.join(
-                    output_folder,
-                    f"{brand_config['user_id']}_{index}_{idx}_{timestamp}.png"
-                )
-                
+    
+                # Save image with timestamp and user-specific folder
+                output_path = os.path.join(user_dir, f"{user_id}_{index}_{idx}_{timestamp}.png")
                 image.save(output_path, 'PNG')
                 result['files'].append(output_path)
-            
+    
             result['success'] = True
-            
+    
         except Exception as e:
             result['error'] = str(e)
-            
+    
         finally:
             driver.quit()
-        
-        return result
+    
+        return result    
 
 async def async_html_to_png(html_list: List[str], class_name: str,
                            output_folder: str = "output_images",

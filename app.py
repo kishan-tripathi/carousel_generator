@@ -5,9 +5,10 @@ from enum import Enum
 from typing import List, Optional, Union
 from pydantic import BaseModel, Field, HttpUrl
 import shutil
-import os
+import time
 from pathlib import Path
 import glob
+import os
 import json
 import asyncio
 import zipfile
@@ -58,7 +59,6 @@ async def create_download_zip(user_id: str) -> BytesIO:
     base_dir = os.path.abspath("final_images")
   
     search_pattern = os.path.join(base_dir, f"*{user_id}*.png")
-    
     image_files = glob.glob(search_pattern)
 
     print(f"Searching for pattern: {search_pattern}")
@@ -66,10 +66,8 @@ async def create_download_zip(user_id: str) -> BytesIO:
     
     if not image_files:
         raise HTTPException(status_code=404, detail=f"No images found for user ID: {user_id}")
-    
     with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
         for image_path in image_files:
-            
             image_name = os.path.basename(image_path)
             
             try:
@@ -82,7 +80,6 @@ async def create_download_zip(user_id: str) -> BytesIO:
     return zip_buffer
 
 
-
 @app.post("/generate-article/")
 async def generate_article(
     request: str = Form(...),
@@ -93,7 +90,9 @@ async def generate_article(
     try:
        
         user_id = uid_generator.generate_uuid()
-        user_dir = os.path.join("final_images", user_id)
+        #user_dir = os.path.join("final_images", user_id)
+        timestamp = int(time.time() * 1000)
+        user_dir = os.path.join("final_images", user_id, f"generation_{timestamp}")
         os.makedirs(user_dir, exist_ok=True)
         os.makedirs("images", exist_ok=True)
         os.makedirs("logos", exist_ok=True)
@@ -134,8 +133,6 @@ async def generate_article(
             user_id=user_id,
             brand_name=article_request.brand_name,
         )
-
-
         zip_buffer = await create_download_zip(user_id)
 
     
@@ -173,7 +170,6 @@ async def generate_article(
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
-        
         if uploaded_logo and os.path.exists(uploaded_logo):
             os.remove(uploaded_logo)
 
