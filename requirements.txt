@@ -11,12 +11,12 @@ openai
 requests
 asyncio
 uuid
-hashlib
 logging
 python-multipart
 shutil
 pathlib
 zipfile
+fal-client
 io
 enum
 concurrent.futures
