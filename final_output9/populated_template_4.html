@@ -13,113 +13,97 @@
         }
 
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Verdana;
-            min-height: 100vh;
+            width: 1080px;
+            height: 1080px;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+            position: relative;
         }
 
         .container {
-            width: 1080px;
-            height: 1080px;
+            width: 100%;
+            height: 100%;
             position: relative;
             overflow: hidden;
         }
 
-        .image {
-            width: 100%;
-            height: 100%;
-            position: relative;
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            height: 90px;
+            width: 90px;
+            padding: 5px;
+            
+            z-index: 2;
         }
 
-        .image::before {
-            content: '';
+        .logo img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .arrow {
             position: absolute;
-            top: 0;
+            top: 20px;
+            right: 20px;
+            font-size: 24px;
+            z-index: 2;
+        }
+
+        .title-text {
+            position: absolute;
+            top: 90px; 
+            left: 20px;
+            right: 20px;
+            z-index: 2;
+            font-size: 48px;
+            font-weight: bold;
+            color: white;
+            background: #1a2942;
+            padding: 15px; 
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .body-text {
+            position: absolute;
+            top: 250px;
+            left: 20px;
+            right: 20px;
+            z-index: 2;
+            font-size: 20px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .image {
+            position: absolute;
+            bottom: 0;
             left: 0;
-            width: 1080px;
-            height: 1080px;
-            background: linear-gradient(
-                to bottom,
-                rgba(0,0,0,0.1) 0%,
-                rgba(0,0,0,0.5) 70%,
-                rgba(0,0,0,1.0) 100%
-            );
+            width: 100%;
+            height: 67%;
+            background-size: cover;
+            background-position: center;
         }
 
         .image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; 
         }
 
-        .title-text {
-            position: absolute;
-            bottom: 150px; /* Adjusted to make space for body-text */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            text-align: center;
-            color: white;
-            font-size: 3em;
-            font-weight: bold;
-            line-height: 1.2;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-
-        .body-text {
-            position: absolute;
-            bottom: 90px; /* Positioned below title-text */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            text-align: center;
-            color: #ffffff;
-            font-size: 1.5em;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-
-        .logo {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 90px;
-            height: 90px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .logo img {
-            height: 50px;
-            object-fit: contain;
-        }
-
-        .brand-name {
-            position: absolute;
-            bottom: 20px; /* Adjusted to be below the body text */
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 1.3em;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
     </style>
 </head>
 <body>
 <div class="container">
+<div class="arrow">➜</div>
+<div class="title-text">CONDITIONAL LOGIC IN JAVASCRIPT EXPLAINED</div>
+<div class="body-text">Conditional statements control flow. They execute code based on conditions, shaping outcomes.</div>
 <div class="image">
-<img alt="Flight attendant demonstrating safety instructions" src="images\placeholder.jpg"/>
+<img alt="Image" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\images\394222c4-097d-4eb6-a5b4-98c245a98344\generation_1745493521475\394222c4-097d-4eb6-a5b4-98c245a98344_page_4.jpg"/>
 </div>
-<div class="title-text">WHY DO WE SELF-SABOTAGE?</div>
-<div class="body-text">Self-sabotage can ruin important moments. We may mess up under pressure. We might waste time instead of pursuing goals. It becomes a cycle of self-defeat.</div>
-<div class="logo">
-<img alt="The Tatva Logo" src="C:\Users\shash\OneDrive\Documents\Carousel_generator\logos\123123logo_.svg"/>
-</div>
-<div class="brand-name">@legalwires</div>
 </div>
 </body>
 </html>

@@ -7,25 +7,77 @@ from bs4 import BeautifulSoup
 import requests
 from dotenv import load_dotenv
 from openai import OpenAI
-from template_processor_old import HTMLTemplateProcessor
+import fal_client
+#from template_processor_old import HTMLTemplateProcessor
 import logging
 
 logger = logging.getLogger(__name__)
 load_dotenv()
 
+# class FluxImageGeneratorAPI:
+#     def __init__(self, api_url="https://ead1-2401-4900-8842-395a-69a1-ea1f-354-55b.ngrok-free.app/generate"):
+#         """
+#         Initialize the FluxImageGeneratorAPI class.
+
+#         Args:
+#             api_url (str): The base URL of the Flux Flask API.
+#         """
+#         self.api_url = api_url
+
+#     def generate_image(self, prompt, height, width, output_path, seed=None):
+#         """
+#         Generate an image via the Flux Flask API.
+        
+#         Args:
+#             prompt (str): Image generation prompt.
+#             height (int): Image height.
+#             width (int): Image width.
+#             output_path (str): Path to save the generated image.
+#             seed (int): Random seed for reproducibility.
+        
+#         Returns:
+#             str: Path to the generated image or None on failure.
+#         """
+#         try:
+#             payload = {
+#                 "prompt": prompt,
+#                 "height": height,
+#                 "width": width,
+#                 "seed": seed
+#             }
+#             response = requests.post(self.api_url, json=payload)
+#             response.raise_for_status()
+            
+#             image_base64 = response.json().get("response")
+#             if image_base64:
+#                 with open(output_path, "wb") as f:
+#                     f.write(base64.b64decode(image_base64))
+#                 return output_path
+#             else:
+#                 logger.error("Error: No image data in API response.")
+#                 return None
+#         except requests.exceptions.RequestException as e:
+#             logger.error(f"Error calling Flux API: {e}")
+#             return None
+
+
 class FluxImageGeneratorAPI:
-    def __init__(self, api_url="https://ead1-2401-4900-8842-395a-69a1-ea1f-354-55b.ngrok-free.app/generate"):
+    def __init__(self, api_key=None):
         """
         Initialize the FluxImageGeneratorAPI class.
 
         Args:
-            api_url (str): The base URL of the Flux Flask API.
+            api_key (str, optional): The FAL API key. If not provided, it will try to use the FAL_KEY environment variable.
         """
-        self.api_url = api_url
+        if api_key:
+            os.environ["FAL_KEY"] = api_key
+        # Verify that FAL_KEY is available in environment
+        if "FAL_KEY" not in os.environ:
+            print("Warning: FAL_KEY environment variable not set. Please set it or provide an API key.")
 
     def generate_image(self, prompt, height, width, output_path, seed=None):
         """
-        Generate an image via the Flux Flask API.
+        Generate an image via the fal-client API.
         
         Args:
             prompt (str): Image generation prompt.
@@ -38,26 +90,100 @@ class FluxImageGeneratorAPI:
             str: Path to the generated image or None on failure.
         """
         try:
-            payload = {
+            # Prepare arguments for the fal-ai/flux/dev model
+            arguments = {
                 "prompt": prompt,
-                "height": height,
-                "width": width,
-                "seed": seed
+                "image_size": {
+                    "width": width,
+                    "height": height
+                },
+                "num_images": 1,
+                "enable_safety_checker": True,
             }
-            response = requests.post(self.api_url, json=payload)
-            response.raise_for_status()
             
-            image_base64 = response.json().get("response")
-            if image_base64:
-                with open(output_path, "wb") as f:
-                    f.write(base64.b64decode(image_base64))
-                return output_path
-            else:
-                logger.error("Error: No image data in API response.")
-                return None
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error calling Flux API: {e}")
+            # Add seed if provided
+            if seed is not None:
+                arguments["seed"] = seed
+                
+            # Call the API and wait for the result
+            result = fal_client.subscribe(
+                "fal-ai/flux/dev",
+                arguments=arguments,
+                with_logs=True
+            )
+            
+            # Save the image to the specified output path
+            if result and "images" in result and len(result["images"]) > 0:
+                image_url = result["images"][0]["url"]
+                
+                # If the image URL is empty but we have a base64 content (sync_mode=True case)
+                if not image_url and "content" in result["images"][0]:
+                    image_base64 = result["images"][0]["content"]
+                    with open(output_path, "wb") as f:
+                        f.write(base64.b64decode(image_base64))
+                    return output_path
+                
+                # Otherwise, download from URL
+                elif image_url:
+                    import requests
+                    image_response = requests.get(image_url)
+                    image_response.raise_for_status()
+                    
+                    with open(output_path, "wb") as f:
+                        f.write(image_response.content)
+                    return output_path
+                
+            print("Error: No image data in API response.")
             return None
+            
+        except Exception as e:
+            print(f"Error generating image with Flux API: {e}")
+            return None
+            
+    def generate_image_stream(self, prompt, height, width, callback=None, seed=None):
+        """
+        Stream image generation results via the fal-client API.
+        
+        Args:
+            prompt (str): Image generation prompt.
+            height (int): Image height.
+            width (int): Image width.
+            callback (function): Callback function to process streaming events.
+            seed (int): Random seed for reproducibility.
+        
+        Returns:
+            Generator yielding stream events.
+        """
+        try:
+            # Prepare arguments for the fal-ai/flux/dev model
+            arguments = {
+                "prompt": prompt,
+                "image_size": {
+                    "width": width,
+                    "height": height
+                },
+                "num_images": 1
+            }
+            
+            # Add seed if provided
+            if seed is not None:
+                arguments["seed"] = seed
+                
+            # Start streaming
+            stream = fal_client.stream(
+                "fal-ai/flux/dev",
+                arguments=arguments
+            )
+            
+            # Process streaming events
+            for event in stream:
+                if callback:
+                    callback(event)
+                yield event
+                
+        except Exception as e:
+            print(f"Error streaming image with Flux API: {e}")
+            yield {"error": str(e)}
 
 
 class ArticleCarouselGenerator:

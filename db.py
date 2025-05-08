@@ -10,7 +10,7 @@ template_specs_file = "template_specifications.json"
 with open(template_specs_file, "r", encoding="utf-8") as f:
     template_specs = json.load(f)
 
-base_dir = "C:\\Users\\shash\\OneDrive\\Documents\\Carousel_generator"
+base_dir = r"C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousal\carousel_generator"
 
 for main_dir in ["layouts_it", "layouts_lit", "layouts_lt", "layouts_t"]:
     collection = db[main_dir]  

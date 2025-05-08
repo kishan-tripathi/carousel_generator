@@ -27,3 +27,4 @@ html_to_png.py
 logs/
 main3.py
 __pycache__/
+venv
