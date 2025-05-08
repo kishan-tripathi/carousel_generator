@@ -4,84 +4,104 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Chess Award Page</title>
+<title>News Post</title>
 <style>
-        body {
+        * {
             margin: 0;
-            font-family: sans serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #ffffff;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 1080px;
+            height: 1080px;
+            font-family: Arial;
+            position: relative;
         }
 
         .container {
-            width: 1080px;
-            height: 1080px;
+            width: 100%;
+            height: 100%;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .image {
             width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
+            height: 70%;
             background-size: cover;
             background-position: center;
         }
 
-        .gradient {
-            position: absolute;
-            bottom: 0;
+        .image img {
             width: 100%;
-            height: 40%;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            height: 100%;
+            object-fit: cover;
         }
 
         .content {
-            position: absolute;
-            bottom: 0;
             width: 100%;
+            height: 30%;
+            background: #fcfbfb;
+            position: relative;
             padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .title-text {
-            font-size: 36px;
-            font-weight: bold;
-            color: #333333;
-            margin-bottom: 10px;
-        }
-
-        .body-text {
-            font-size: 20px;
-            color: #555555;
-            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         .logo {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            bottom: 20px;
+            left: 20px;
+            height: 90px;
+            width: 90px;
+            padding: 5px; 
         }
 
         .logo img {
-            width: 50px;
-            height: auto;
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
+        .arrow {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            font-size: 24px;
+        }
+
+        .title-text {
+            font-size: 3em;
+            font-weight: bold;
+            color: #fcfbfb;
+            background: #940b52;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px; 
+        }
+
+        .body-text {
+            font-size: 20px;
+            color: #000000;
+            line-height: 1.5;
+            margin-bottom: 10px;
         }
 
         .brand-name {
+            font-size: 20px;
+            color: #0c776d;
+            text-align: center;
             position: absolute;
-            top: 10px;
-            right: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333333;
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: auto;
+            padding: 10px;
             border-radius: 5px;
         }
     </style>
@@ -89,17 +109,17 @@
 <body>
 <div class="container">
 <div class="image">
-<img alt="Image" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\images\0a8c4ec0-67fc-468d-9aa9-eb4fc838f2b2\generation_1746688165589\0a8c4ec0-67fc-468d-9aa9-eb4fc838f2b2_page_1.jpg"/>
+<img alt="Image" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\images\123\generation_1746707624245\123_page_1.jpg"/>
 </div>
-<div class="gradient"></div>
 <div class="content">
-<div class="title-text">UNDERSTANDING ANCIENT CIVILIZATIONS TODAY</div>
-<div class="body-text">Ancient civilizations shaped modern society. Their innovations greatly impacted architecture, governance, and culture. Today, we see their legacies in structure, systems, and art. Understanding them is vital for appreciating our world today.</div>
-</div>
+<div class="title-text">MYSERIOUS STRUGGLES: OCD AND SELF-SABOTAGE</div>
+<div class="body-text">In a BBC interview, I battled OCD and self-sabotage instinctively. My mind spiraled with distractions, affecting my performance and confidence.</div>
 <div class="logo">
-<img alt="Logo" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\logos\0a8c4ec0-67fc-468d-9aa9-eb4fc838f2b21746688165589logo_.svg"/>
+<img alt="logo" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\logos\1231746707624245logo_.svg"/>
 </div>
-<div class="brand-name">wasserstoff</div>
+<div class="arrow">➜</div>
+<div class="brand-name">TechCorp</div>
+</div>
 </div>
 </body>
 </html>

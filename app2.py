@@ -30,6 +30,7 @@ class ArticleRequest(BaseModel):
     include_images: bool = Field(True, description="Whether to include images")
     font_style: str = Field(..., description="Font Style")
     brand_name: Optional[str] = Field(None, description="Brand name if logo is provided")
+    user_id: str
 
 def encode_images_to_base64(user_id: str, timestamp: str) -> List[str]:
     base_dir = os.path.abspath("final_images")
@@ -50,26 +51,27 @@ def encode_images_to_base64(user_id: str, timestamp: str) -> List[str]:
             encoded_images.append(encoded)
     return encoded_images
 
-@app.post("/generate-article/")
+@app.post("/generate-carousel/")
 async def generate_article(
     request: str = Form(...),
     logo: Optional[UploadFile] = File(None)
 ):
     print(f"request is {request}")
-    user_id = None
     uploaded_logo = None
     try:
-        user_id = uid_generator.generate_uuid()
+        request_data = json.loads(request)
+        article_request = ArticleRequest(**request_data)
+        # print("request data ", request_data)
+        print("article request ", article_request)
+        user_id =article_request.user_id
+        print(f"this is user_id {user_id}")      
         timestamp = int(time.time() * 1000)
         user_dir = os.path.join("final_images", user_id, f"generation_{timestamp}")
         os.makedirs(user_dir, exist_ok=True)
         os.makedirs("images", exist_ok=True)
         os.makedirs("logos", exist_ok=True)
 
-        request_data = json.loads(request)
-        article_request = ArticleRequest(**request_data)
-        # print("request data ", request_data)
-        print("article request ", article_request)
+
 
         print(f"logo and brand_name{logo}{article_request.brand_name}")
 
@@ -128,7 +130,7 @@ async def generate_article(
             except Exception as e:
                 print(f"Error during cleanup: {e}")  
 
-        asyncio.create_task(cleanup_user_files(user_id, timestamp))
+        # asyncio.create_task(cleanup_user_files(user_id, timestamp))
 
         return JSONResponse(content={"images": encoded_images})
 

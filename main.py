@@ -18,14 +18,14 @@ import logging
 def main(
     article_input, 
     num_pages, 
+    time_stamp,
+    user_id,
     color_palette_type: ColorPaletteInput,
     color_palette_input=None,
     uploaded_logo=None, 
     include_images=True, 
     font_style=None,
-    user_id="123",
-    brand_name=None,
-    time_stamp = "123"
+    brand_name=None
 ):
     """
     Main function to process article content and generate designed templates
@@ -220,6 +220,9 @@ def main(
             logger.info("\nFailed conversions:")
             for f in failed:
                 print(f"HTML {f['index']}: {f['error']}")
+
+        print("Generated Files:", modified_files)    
+        print("Generated Files:", results)                
         
         return modified_files, results   
 

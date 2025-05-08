@@ -15,7 +15,7 @@
         body {
             width: 1080px;
             height: 1080px;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
             position: relative;
         }
 
@@ -35,10 +35,16 @@
             background-position: center;
         }
 
+        .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .content {
             width: 100%;
             height: 30%;
-            background: #b69191;
+            background: #fcfbfb;
             position: relative;
             padding: 20px;
             display: flex;
@@ -46,41 +52,73 @@
             justify-content: flex-start;
         }
 
+        .logo {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            height: 90px;
+            width: 90px;
+            padding: 5px; 
+        }
+
+        .logo img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain;
+        }
+
         .arrow {
             position: absolute;
             bottom: 20px;
             right: 20px;
-            font-size: 30px;
+            font-size: 24px;
         }
 
         .title-text {
             font-size: 3em;
             font-weight: bold;
-            color: white;
-            background: #1a2942;
-            margin-bottom: 20px;
+            color: #fcfbfb;
+            background: #940b52;
+            margin-bottom: 10px;
             text-align: center;
-            margin-top: 40px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 5px; 
         }
 
         .body-text {
             font-size: 20px;
-            color: #333;
+            color: #000000;
             line-height: 1.5;
             margin-bottom: 10px;
+        }
+
+        .brand-name {
+            font-size: 20px;
+            color: #0c776d;
+            text-align: center;
+            position: absolute;
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: auto;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
 <div class="container">
 <div class="image">
-<img alt="Image" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\images\394222c4-097d-4eb6-a5b4-98c245a98344\generation_1745493521475\394222c4-097d-4eb6-a5b4-98c245a98344_page_3.jpg"/>
+<img alt="Image" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\images\123\generation_1746707624245\123_page_3.jpg"/>
 </div>
 <div class="content">
-<div class="title-text">JAVASCRIPT FUNCTIONS: ESSENTIAL BUILDING BLOCKS</div>
-<div class="body-text">Functions encapsulate code for reuse. They can take parameters and return results for flexibility.</div>
+<div class="title-text">THE CHARIOT METAPHOR OF HUMAN PSYCHE</div>
+<div class="body-text">Plato’s chariot metaphor illustrates our internal conflict. A balance exists between our aspirations and impulses guiding our actions indecisively.</div>
+<div class="logo">
+<img alt="logo" src="C:\Users\Abbas Rizvi\Desktop\buxa ai content\carousalbackend\carousel_generator\logos\1231746707624245logo_.svg"/>
+</div>
 <div class="arrow">➜</div>
+<div class="brand-name">TechCorp</div>
 </div>
 </div>
 </body>
